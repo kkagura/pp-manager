@@ -1,0 +1,30 @@
+// 淡入淡出
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+
+// 缩放进入动画
+.zoom-in-enter-active,
+.zoom-in-leave-active {
+  transition: opacity 0.3s cubic-bezier(0.55, 0, 0.1, 1),
+    transform 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+}
+.zoom-in-enter-from,
+.zoom-in-leave-to {
+  opacity: 0;
+  transform: scale(0.92);
+}
+.zoom-in-enter-to,
+.zoom-in-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
