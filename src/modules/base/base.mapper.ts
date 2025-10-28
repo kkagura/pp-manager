@@ -23,9 +23,9 @@ export class BaseMapper<T extends BaseEntity> {
 
   list(s?: Select): Promise<T[]> {
     if (!s) {
-      s = squel.select().order("created_at", false);
+      s = squel.select().from(this.tableName).order("created_at", false);
     }
-    const sql = s.from(this.tableName).toString();
+    const sql = s.toString();
     return this.db.dbQuery<T>(sql);
   }
 

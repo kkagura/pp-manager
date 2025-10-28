@@ -18,7 +18,7 @@ export class BaseService<T extends BaseEntity> {
     return this.mapper.get(id);
   }
 
-  list(): Promise<T[]> {
+  list(_: any): Promise<T[]> {
     return this.mapper.list();
   }
 
