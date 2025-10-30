@@ -30,6 +30,16 @@ export const siderRoutes = [
     },
   },
   {
+    name: "ShortcutList",
+    path: "/shortcut/list",
+    component: () => import("../views/shortcut/ShortcutList.vue"),
+    meta: {
+      title: "快捷方式",
+      icon: "icon-030-shortcutscriptapp",
+      menu: true,
+    },
+  },
+  {
     name: "Setting",
     path: "/setting",
     component: () => import("../views/setting/Setting.vue"),
