@@ -1,5 +1,6 @@
 import squel, { type Select } from "squel";
 import { BaseEntity } from "./base.entity";
+import dayjs from "dayjs";
 
 const db = window.ipcRenderer as unknown as {
   dbQuery: <T>(sql: string) => Promise<T[]>;
@@ -51,6 +52,7 @@ export abstract class BaseMapper<T extends BaseEntity> {
     update = Object.keys(entity).reduce((prev, curr) => {
       return prev.set(curr, entity[curr as keyof T]);
     }, update);
+    update.set("updatedAt", dayjs().format("YYYY-MM-DD HH:mm:ss"));
     const sql = update.toString();
     return this.db.dbExecute(sql);
   }

@@ -14,6 +14,9 @@ importers:
       better-sqlite3:
         specifier: ^12.4.1
         version: 12.4.1
+      dayjs:
+        specifier: ^1.11.18
+        version: 1.11.18
       electron-log:
         specifier: ^5.4.3
         version: 5.4.3

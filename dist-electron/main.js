@@ -2022,6 +2022,7 @@ function processMessage(message) {
 const main = main$1;
 var main_1 = main;
 const log = /* @__PURE__ */ getDefaultExportFromCjs(main_1);
+log.initialize();
 log.transports.console.format = "{h}:{i}:{s} {text}";
 log.transports.file.format = "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
 const require$1 = createRequire(import.meta.url);

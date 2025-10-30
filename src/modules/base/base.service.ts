@@ -1,6 +1,7 @@
 import { Select } from "squel";
 import { BaseEntity } from "./base.entity";
 import { BaseMapper } from "./base.mapper";
+import { logMethod } from "@/utils/log";
 
 export interface Page<T> {
   records: T[];
@@ -16,18 +17,22 @@ export abstract class BaseService<T extends BaseEntity> {
   abstract mapper: BaseMapper<T>;
   constructor() {}
 
+  @logMethod()
   get(id: number): Promise<T | null> {
     return this.mapper.get(id);
   }
 
+  @logMethod()
   list(_: any): Promise<T[]> {
     return this.mapper.list();
   }
 
+  @logMethod()
   add(entity: T): Promise<unknown> {
     return this.mapper.add(entity);
   }
 
+  @logMethod()
   update(entity: Partial<T> & { id: number }): Promise<unknown> {
     return this.mapper.update(entity);
   }
@@ -39,6 +44,7 @@ export abstract class BaseService<T extends BaseEntity> {
     return builder;
   }
 
+  @logMethod()
   async page<P extends PageParams>(params: P): Promise<Page<T>> {
     const builder = this.pageBuilder(params);
     const total = await this.mapper.total(builder);

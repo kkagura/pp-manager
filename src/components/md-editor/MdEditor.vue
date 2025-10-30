@@ -19,10 +19,12 @@ const emit = defineEmits(["update:modelValue"]);
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const editor = shallowRef<Vditor>();
+const isReady = ref(false);
 
 watch(
   () => props.modelValue,
   (newVal) => {
+    if (!isReady.value) return;
     if (newVal !== editor.value?.getValue()) {
       editor.value?.setValue(newVal);
     }
@@ -43,6 +45,7 @@ onMounted(() => {
     after: () => {
       setTheme();
       editor.value?.setValue(props.modelValue);
+      isReady.value = true;
     },
   });
 });

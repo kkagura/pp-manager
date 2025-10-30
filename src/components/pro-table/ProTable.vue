@@ -53,7 +53,8 @@ const tableProps = computed(() => {
 const wrapperRef = ref<HTMLElement>();
 const tableBodyHeight = ref(0);
 useResizeObserver(wrapperRef, () => {
-  const wrapper = wrapperRef.value!;
+  const wrapper = wrapperRef.value;
+  if (!wrapper) return;
   // const header = wrapper.querySelector(".el-table__header");
   const pagination = wrapper.querySelector(".pro-table-pagination");
   let height = wrapper.clientHeight;
