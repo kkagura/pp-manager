@@ -11,8 +11,9 @@ export interface PageParams {
   pageSize: number;
 }
 
-export class BaseService<T extends BaseEntity> {
-  constructor(public mapper: BaseMapper<T>) {}
+export abstract class BaseService<T extends BaseEntity> {
+  abstract mapper: BaseMapper<T>;
+  constructor() {}
 
   get(id: number): Promise<T | null> {
     return this.mapper.get(id);
@@ -20,6 +21,10 @@ export class BaseService<T extends BaseEntity> {
 
   list(_: any): Promise<T[]> {
     return this.mapper.list();
+  }
+
+  add(entity: T): Promise<unknown> {
+    return this.mapper.add(entity);
   }
 
   async page<P extends PageParams>(params: P): Promise<Page<T>> {

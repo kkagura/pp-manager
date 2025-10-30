@@ -12,7 +12,7 @@ export default defineConfig({
         // Shortcut of `build.lib.entry`.
         entry: "electron/main.ts",
         vite: {
-          configFile: path.join(__dirname, "vite.config.main.ts")
+          configFile: path.join(__dirname, "vite.config.main.ts"),
         },
       },
       preload: {
@@ -34,5 +34,11 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "src"),
     },
+  },
+  build: {
+    target: "ES2020",
+  },
+  esbuild: {
+    target: "ES2020",
   },
 });

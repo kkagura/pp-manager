@@ -4,7 +4,7 @@
       <div
         class="menu-item"
         :title="menu.meta.title"
-        v-for="menu in siderRoutes"
+        v-for="menu in menus"
         :key="menu.path"
         @click="handleMenuClick(menu)"
       >
@@ -21,6 +21,10 @@ import { siderRoutes } from "@/router";
 import Iconfont from "../iconfont/Iconfont.vue";
 import { useRouter } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
+
+const menus = siderRoutes.filter(
+  (menu) => menu.meta && menu.meta.menu === true
+);
 
 const router = useRouter();
 const handleMenuClick = (menu: RouteRecordRaw) => {

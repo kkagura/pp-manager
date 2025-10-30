@@ -120,8 +120,6 @@ export default defineComponent({
           ref: searchBarRef,
           class: "search-bar",
           style: {
-            width: "100%",
-            height: "100%",
             display: "grid",
             gridColumnGap: `${props.gutter}px`,
             gridTemplateColumns: `repeat(${columns.value}, 1fr)`,

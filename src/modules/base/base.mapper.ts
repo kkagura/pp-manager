@@ -7,10 +7,11 @@ const db = window.ipcRenderer as unknown as {
   dbExecute: (sql: string) => Promise<void>;
 };
 
-export class BaseMapper<T extends BaseEntity> {
+export abstract class BaseMapper<T extends BaseEntity> {
   db = db;
+  abstract tableName: string;
 
-  constructor(public tableName: string) {}
+  constructor() {}
 
   get(id: number): Promise<T | null> {
     const sql = squel
@@ -23,7 +24,7 @@ export class BaseMapper<T extends BaseEntity> {
 
   list(s?: Select): Promise<T[]> {
     if (!s) {
-      s = squel.select().from(this.tableName).order("created_at", false);
+      s = squel.select().from(this.tableName).order("createdAt", false);
     }
     const sql = s.toString();
     return this.db.dbQuery<T>(sql);
@@ -36,14 +37,14 @@ export class BaseMapper<T extends BaseEntity> {
       .then((res) => res?.total ?? 0);
   }
 
-  // add(entity: T) {
-  //   let insert = squel.insert().into(this.tableName);
-  //   insert = Object.keys(entity).reduce((prev, curr) => {
-  //     return prev.set(curr, entity[curr as keyof T]);
-  //   }, insert);
-  //   const sql = insert.toString();
-  //   return this.db.dbExecute(sql);
-  // }
+  add(entity: Partial<T>) {
+    let insert = squel.insert().into(this.tableName);
+    insert = Object.keys(entity).reduce((prev, curr) => {
+      return prev.set(curr, entity[curr as keyof T]);
+    }, insert);
+    const sql = insert.toString();
+    return this.db.dbExecute(sql);
+  }
 
   builder() {
     return squel.select().from(this.tableName);
