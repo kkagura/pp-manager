@@ -1,4 +1,4 @@
-import { BaseService } from "../base/base.service";
+import { BaseService, Page, PageParams } from "../base/base.service";
 import { ProjectEntity } from "./project.entity";
 import { type ProjectMapper, ProjectMapperKey } from "./project.mapper";
 import { ProjectCreateDto, ProjectListSearchDto } from "./project.dto";
@@ -22,5 +22,20 @@ export class ProjectService extends BaseService<ProjectEntity> {
 
   add(entity: ProjectCreateDto): Promise<unknown> {
     return this.mapper.add(entity);
+  }
+
+  async page(
+    params: PageParams<ProjectListSearchDto>
+  ): Promise<Page<ProjectEntity>> {
+    const builder = this.pageBuilder(params);
+    if (params.name) {
+      builder.where("name like ?", `%${params.name}%`);
+    }
+    const total = await this.mapper.total(builder);
+    const records = await this.mapper.list(builder);
+    return {
+      records,
+      total,
+    };
   }
 }

@@ -1,3 +1,4 @@
+import { Select } from "squel";
 import { BaseEntity } from "./base.entity";
 import { BaseMapper } from "./base.mapper";
 
@@ -31,10 +32,15 @@ export abstract class BaseService<T extends BaseEntity> {
     return this.mapper.update(entity);
   }
 
-  async page<P extends PageParams>(params: P): Promise<Page<T>> {
+  pageBuilder(params: PageParams): Select {
     const builder = this.mapper.builder();
     const offset = (params.page - 1) * params.pageSize;
     builder.limit(params.pageSize).offset(offset);
+    return builder;
+  }
+
+  async page<P extends PageParams>(params: P): Promise<Page<T>> {
+    const builder = this.pageBuilder(params);
     const total = await this.mapper.total(builder);
     const records = await this.mapper.list(builder);
     return {
