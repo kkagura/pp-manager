@@ -17,7 +17,15 @@ export const siderRoutes = [
     component: () => import("../views/work-space/WorkSpaceForm.vue"),
     meta: {
       title: "新增工作区",
-      icon: "icon-gongzuoqu",
+      menu: false,
+    },
+  },
+  {
+    name: "WorkSpaceEdit",
+    path: "/work-space/edit/:id",
+    component: () => import("../views/work-space/WorkSpaceForm.vue"),
+    meta: {
+      title: "编辑工作区",
       menu: false,
     },
   },

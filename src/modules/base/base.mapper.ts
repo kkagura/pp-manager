@@ -46,6 +46,15 @@ export abstract class BaseMapper<T extends BaseEntity> {
     return this.db.dbExecute(sql);
   }
 
+  update(entity: Partial<T> & { id: number }) {
+    let update = squel.update().table(this.tableName).where("id=?", entity.id);
+    update = Object.keys(entity).reduce((prev, curr) => {
+      return prev.set(curr, entity[curr as keyof T]);
+    }, update);
+    const sql = update.toString();
+    return this.db.dbExecute(sql);
+  }
+
   builder() {
     return squel.select().from(this.tableName);
   }

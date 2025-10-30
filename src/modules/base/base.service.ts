@@ -6,10 +6,10 @@ export interface Page<T> {
   total: number;
 }
 
-export interface PageParams {
+export type PageParams<T = unknown> = {
   page: number;
   pageSize: number;
-}
+} & T;
 
 export abstract class BaseService<T extends BaseEntity> {
   abstract mapper: BaseMapper<T>;
@@ -25,6 +25,10 @@ export abstract class BaseService<T extends BaseEntity> {
 
   add(entity: T): Promise<unknown> {
     return this.mapper.add(entity);
+  }
+
+  update(entity: Partial<T> & { id: number }): Promise<unknown> {
+    return this.mapper.update(entity);
   }
 
   async page<P extends PageParams>(params: P): Promise<Page<T>> {

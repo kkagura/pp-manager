@@ -82,9 +82,29 @@ const handleSave = () => {
         ElMessage.success("新增成功");
         router.back();
       });
+    } else {
+      projectService
+        .update({
+          ...model.value,
+          id: +route.params.id,
+        })
+        .then(() => {
+          ElMessage.success("编辑成功");
+          router.back();
+        });
     }
   });
 };
+
+const onInit = () => {
+  if (route.name === "WorkSpaceEdit") {
+    projectService.get(+route.params.id).then((res) => {
+      Object.assign(model.value, res);
+    });
+  }
+};
+
+onInit();
 </script>
 <style scoped lang="less">
 .work-space-form {

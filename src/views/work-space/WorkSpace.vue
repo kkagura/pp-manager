@@ -1,6 +1,6 @@
 <template>
   <PageContainer>
-    <SearchBar @search="handleSearch" @reset="handleReset">
+    <SearchBar @search="tableContext.search" @reset="tableContext.reset">
       <SearchItem label="项目名称">
         <el-input
           v-model="searchParams.name"
@@ -15,41 +15,64 @@
         >
       </template>
     </SearchBar>
-    <PageContent></PageContent>
+    <PageContent :scroll="false">
+      <ProTable :tableContext="tableContext">
+        <el-table-column
+          min-width="100"
+          prop="name"
+          label="工作区名称"
+        ></el-table-column>
+        <el-table-column
+          min-width="100"
+          prop="shortName"
+          label="简称"
+        ></el-table-column>
+        <el-table-column
+          min-width="100"
+          prop="createdAt"
+          label="创建时间"
+        ></el-table-column>
+        <el-table-column width="100" prop="action" label="操作" align="center">
+          <template #default="scope">
+            <el-button link type="primary" @click="handleEdit(scope.row.id)"
+              >编辑</el-button
+            >
+          </template>
+        </el-table-column>
+      </ProTable>
+    </PageContent>
   </PageContainer>
 </template>
 
 <script lang="ts" setup>
 import { ProjectServiceKey } from "@/modules/project/project.service";
-import { ProjectListSearchDto } from "@/modules/project/project.dto";
-import { ref } from "vue";
 import { Plus } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { getService } from "@/modules";
+import ProTable from "@/components/pro-table/ProTable.vue";
+import { useTable } from "@/hooks/use-table";
+import { toRefs } from "vue";
 
 const router = useRouter();
 const projectService = getService(ProjectServiceKey);
 
-const searchParams = ref<ProjectListSearchDto>({
-  name: "",
+const tableContext = useTable({
+  fetch: projectService.page.bind(projectService),
+  searchParams: {
+    name: "",
+  },
 });
 
-const handleReset = () => {
-  searchParams.value = {
-    name: "",
-  };
-};
-
-const handleSearch = () => {
-  projectService.list(searchParams.value).then((projects) => {
-    console.log(projects);
-  });
-};
+const { searchParams } = toRefs(tableContext);
 
 const handleAdd = () => {
   router.push("/work-space/add");
 };
 
-handleSearch();
+const handleEdit = (id: string) => {
+  router.push(`/work-space/edit/${id}`);
+};
+
+tableContext.search();
 </script>
 <style scoped lang="less"></style>
