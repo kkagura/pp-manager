@@ -57,6 +57,15 @@ export abstract class BaseMapper<T extends BaseEntity> {
     return this.db.dbExecute(sql);
   }
 
+  delete(id: number) {
+    const sql = squel
+      .delete()
+      .from(this.tableName)
+      .where("id=?", id)
+      .toString();
+    return this.db.dbExecute(sql);
+  }
+
   builder() {
     return squel.select().from(this.tableName);
   }

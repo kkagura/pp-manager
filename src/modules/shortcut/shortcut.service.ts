@@ -4,6 +4,7 @@ import { type ShortcutMapper, ShortcutMapperKey } from "./shortcut.mapper";
 import { ShortcutCreateDto, ShortcutListSearchDto } from "./shortcut.dto";
 import { inject, injectable, InjectionKey } from "@/di";
 import { logMethod } from "@/utils/log";
+import { SourceService, SourceServiceKey } from "../source/source.service";
 
 export const ShortcutServiceKey: InjectionKey<ShortcutService> =
   Symbol("ShortcutService");
@@ -11,6 +12,9 @@ export const ShortcutServiceKey: InjectionKey<ShortcutService> =
 export class ShortcutService extends BaseService<ShortcutEntity> {
   @inject(ShortcutMapperKey)
   mapper: ShortcutMapper;
+
+  @inject(SourceServiceKey)
+  sourceService: SourceService;
 
   @logMethod()
   list(searchDto: ShortcutListSearchDto): Promise<ShortcutEntity[]> {
@@ -41,5 +45,13 @@ export class ShortcutService extends BaseService<ShortcutEntity> {
       records,
       total,
     };
+  }
+
+  async delete(id: number): Promise<unknown> {
+    const sources = await this.sourceService.list({ shortcutId: id });
+    if (sources.length > 0) {
+      throw new Error("该快捷方式下有关联资源，不能删除");
+    }
+    return super.delete(id);
   }
 }

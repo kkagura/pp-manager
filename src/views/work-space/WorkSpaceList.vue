@@ -32,11 +32,20 @@
           prop="createdAt"
           label="创建时间"
         ></el-table-column>
-        <el-table-column width="100" prop="action" label="操作" align="center">
+        <el-table-column width="140" prop="action" label="操作" align="center">
           <template #default="scope">
             <el-button link type="primary" @click="handleEdit(scope.row.id)"
               >编辑</el-button
             >
+            <el-popconfirm
+              title="确定删除该数据吗？"
+              placement="top-end"
+              @confirm="handleDelete(scope.row.id)"
+            >
+              <template #reference>
+                <el-button link type="danger">删除</el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </ProTable>
@@ -69,8 +78,12 @@ const handleAdd = () => {
   router.push("/work-space/add");
 };
 
-const handleEdit = (id: string) => {
+const handleEdit = (id: number) => {
   router.push(`/work-space/edit/${id}`);
+};
+
+const handleDelete = (id: number) => {
+  projectService.delete(id);
 };
 
 tableContext.search();

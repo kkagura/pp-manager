@@ -4,6 +4,7 @@ import { type ProjectMapper, ProjectMapperKey } from "./project.mapper";
 import { ProjectCreateDto, ProjectListSearchDto } from "./project.dto";
 import { inject, injectable, InjectionKey } from "@/di";
 import { logMethod } from "@/utils/log";
+import { SourceService, SourceServiceKey } from "../source/source.service";
 
 export const ProjectServiceKey: InjectionKey<ProjectService> =
   Symbol("ProjectService");
@@ -11,6 +12,9 @@ export const ProjectServiceKey: InjectionKey<ProjectService> =
 export class ProjectService extends BaseService<ProjectEntity> {
   @inject(ProjectMapperKey)
   mapper: ProjectMapper;
+
+  @inject(SourceServiceKey)
+  sourceService: SourceService;
 
   @logMethod()
   list(searchDto: ProjectListSearchDto): Promise<ProjectEntity[]> {
@@ -41,5 +45,13 @@ export class ProjectService extends BaseService<ProjectEntity> {
       records,
       total,
     };
+  }
+
+  async delete(id: number): Promise<unknown> {
+    const sources = await this.sourceService.list({ projectId: id });
+    if (sources.length > 0) {
+      throw new Error("该工作区下有关联资源，不能删除");
+    }
+    return super.delete(id);
   }
 }

@@ -1,11 +1,11 @@
 <template>
   <PageContainer>
     <SearchBar @search="tableContext.search" @reset="tableContext.reset">
-      <SearchItem label="快捷方式名称">
+      <SearchItem label="资源名称">
         <el-input
           v-model="searchParams.name"
           :maxlength="20"
-          placeholder="请输入快捷方式名称"
+          placeholder="请输入资源名称"
           clearable
         ></el-input>
       </SearchItem>
@@ -20,23 +20,16 @@
         <el-table-column
           min-width="100"
           prop="name"
-          label="快捷方式名称"
+          label="资源名称"
         ></el-table-column>
         <el-table-column
           min-width="100"
           prop="path"
           label="路径"
         ></el-table-column>
-        <el-table-column min-width="100" prop="icon" label="图标">
-          <!-- <template #default="scope">
-            <el-button
-              link
-              type="primary"
-              @click="handlePreview(scope.row.icon)"
-            >
-              查看
-            </el-button>
-          </template> -->
+        <el-table-column min-width="100" prop="projectName" label="所属项目">
+        </el-table-column>
+        <el-table-column min-width="100" prop="shortcut" label="快捷方式">
         </el-table-column>
         <el-table-column
           min-width="100"
@@ -61,7 +54,7 @@
         </el-table-column>
       </ProTable>
     </PageContent>
-    <ShortcutModal
+    <SourceModal
       :id="formContext.id"
       v-model:visible="formContext.visible"
       @success="tableContext.search"
@@ -70,21 +63,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ShortcutServiceKey } from "@/modules";
+import { SourceServiceKey } from "@/modules";
 import { Plus } from "@element-plus/icons-vue";
 import { getService } from "@/modules";
 import ProTable from "@/components/pro-table/ProTable.vue";
 import { useTable } from "@/hooks/use-table";
 import { reactive, toRefs } from "vue";
-import ShortcutModal from "./components/ShortcutModal.vue";
-import { useImagePreviewStore } from "@/store/image-preview";
+import SourceModal from "./components/SourceModal.vue";
 
-const imagePreview = useImagePreviewStore();
-
-const shortcutService = getService(ShortcutServiceKey);
+const sourceService = getService(SourceServiceKey);
 
 const tableContext = useTable({
-  fetch: shortcutService.page.bind(shortcutService),
+  fetch: sourceService.page.bind(sourceService),
   searchParams: {
     name: "",
   },
@@ -106,13 +96,8 @@ const handleEdit = (id: number) => {
   formContext.visible = true;
 };
 
-const handlePreview = (icon: string) => {
-  imagePreview.imageUrl = icon;
-  imagePreview.visible = true;
-};
-
 const handleDelete = (id: number) => {
-  shortcutService.delete(id).then(() => {
+  sourceService.delete(id).then(() => {
     tableContext.search();
   });
 };

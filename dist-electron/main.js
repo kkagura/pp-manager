@@ -2181,11 +2181,43 @@ async function update2() {
   await createShortcutsTable();
   await setVersion(2);
 }
+function createSourcesTable() {
+  return new Promise((resolve, reject) => {
+    const sql = `
+    CREATE TABLE IF NOT EXISTS sources (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      path TEXT NOT NULL,
+      shortcutId INTEGER NOT NULL,
+      projectId INTEGER NOT NULL,
+      description TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `;
+    db.prepare(sql).run((err) => {
+      if (err) {
+        log.error("create sources table failed", err);
+        reject(err);
+      } else {
+        log.info("create sources table success");
+        resolve(true);
+      }
+    });
+  });
+}
+async function update3() {
+  const version = await getVersion();
+  if (version >= 3) return;
+  await createSourcesTable();
+  await setVersion(3);
+}
 async function migrate() {
   const version = await getVersion();
   log.info(`[db] migrate version: ${version}`);
   await update1();
   await update2();
+  await update3();
 }
 const __dirname$1 = path$6.dirname(fileURLToPath(import.meta.url));
 process.env.APP_ROOT = path$6.join(__dirname$1, "..");

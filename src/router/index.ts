@@ -40,6 +40,16 @@ export const siderRoutes = [
     },
   },
   {
+    name: "SourceList",
+    path: "/source/list",
+    component: () => import("../views/source/SourceList.vue"),
+    meta: {
+      title: "资源",
+      icon: "icon-ziyuan",
+      menu: true,
+    },
+  },
+  {
     name: "Setting",
     path: "/setting",
     component: () => import("../views/setting/Setting.vue"),

@@ -55,5 +55,12 @@ export abstract class BaseService<T extends BaseEntity> {
     };
   }
 
-  // add()
+  @logMethod()
+  delete(id: number): Promise<unknown> {
+    return this.mapper.delete(id);
+  }
+
+  builder() {
+    return this.mapper.builder();
+  }
 }
