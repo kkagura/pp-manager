@@ -12,6 +12,7 @@ import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import PageContainer from "@/components/page-layout/PageContainer.vue";
 import PageHeader from "@/components/page-layout/PageHeader.vue";
 import PageContent from "@/components/page-layout/PageContent.vue";
+import PageSider from "@/components/page-layout/PageSider.vue";
 import SearchBar from "@/components/search-bar/SearchBar.vue";
 import SearchItem from "@/components/search-bar/SearchItem.vue";
 
@@ -26,6 +27,7 @@ const boostrap = () => {
     .component("PageContainer", PageContainer)
     .component("PageHeader", PageHeader)
     .component("PageContent", PageContent)
+    .component("PageSider", PageSider)
     .component("SearchBar", SearchBar)
     .component("SearchItem", SearchItem)
     .mount("#app")

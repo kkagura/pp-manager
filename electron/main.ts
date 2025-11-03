@@ -70,7 +70,14 @@ function createWindow() {
       const { exe, args } = params;
       return new Promise((resolve, reject) => {
         log.info(`openSource: ${exe} ${args}`);
-        exec(`"${exe}" "${args}"`, (error, stdout, stderr) => {
+        let cmd;
+        // 写死...
+        if (args.startsWith("http")) {
+          cmd = `start ${args}`;
+        } else {
+          cmd = `"${exe}" "${args}"`;
+        }
+        exec(cmd, (error, stdout, stderr) => {
           if (error) {
             reject(error);
             log.error(`openSource error: ${error}`);

@@ -1,7 +1,7 @@
 <template>
   <div
     class="page-container"
-    :draggable="draggable"
+    :class="['is-' + direction]"
     @drop="handleDrop"
     @dragover="handleDragOver"
     @dragleave="handleDragLeave"
@@ -11,10 +11,16 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, PropType } from "vue";
+
 const props = defineProps({
-  draggable: {
-    type: Boolean,
-    default: false,
+  direction: {
+    type: String as PropType<"vertical" | "horizontal">,
+    default: "vertical",
+  },
+  padding: {
+    type: Number,
+    default: 12,
   },
 });
 
@@ -69,16 +75,23 @@ const handleDrop = async (event: DragEvent) => {
     console.error("检查路径失败:", error);
   }
 };
+
+const stylePadding = computed(() => `${props.padding}px`);
 </script>
 <style scoped lang="less">
 .page-container {
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
   overflow: hidden;
-  padding: 12px;
+  padding: v-bind(stylePadding);
   box-sizing: border-box;
   transition: background-color 0.2s;
+  &.is-vertical {
+    flex-direction: column;
+  }
+  &.is-horizontal {
+    flex-direction: row;
+  }
 }
 </style>

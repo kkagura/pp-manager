@@ -1,3 +1,4 @@
+import { debounce } from "@/utils/debounce";
 import { onBeforeMount, onMounted, shallowRef, type Ref } from "vue";
 
 export function useResizeObserver(
@@ -5,10 +6,11 @@ export function useResizeObserver(
   cb: ResizeObserverCallback
 ) {
   const observer = shallowRef<ResizeObserver>();
+  const debouncedCb = debounce(cb, 10);
   onMounted(() => {
     if (el.value) {
       observer.value = new ResizeObserver((...args) => {
-        cb(...args);
+        debouncedCb(...args);
       });
       observer.value.observe(el.value);
     }

@@ -2,6 +2,16 @@ import { createRouter, createWebHistory } from "vue-router";
 
 export const siderRoutes = [
   {
+    name: "HomePage",
+    path: "/home",
+    component: () => import("../views/home-page/HomePage.vue"),
+    meta: {
+      title: "首页",
+      icon: "icon-shouye",
+      menu: true,
+    },
+  },
+  {
     name: "WorkSpaceList",
     path: "/work-space/list",
     component: () => import("../views/work-space/WorkSpaceList.vue"),
@@ -64,7 +74,7 @@ export const siderRoutes = [
 export const routes = [
   {
     path: "/",
-    redirect: "/work-space/list",
+    redirect: "/home",
   },
   {
     path: "/sider",

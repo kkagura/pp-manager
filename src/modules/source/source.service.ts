@@ -20,13 +20,13 @@ export class SourceService extends BaseService<SourceEntity> {
   @inject(ShortcutServiceKey)
   shortcutService: ShortcutService;
 
-  list(searchDto: SourceListSearchDto): Promise<SourceEntity[]> {
+  async list(searchDto: SourceListSearchDto): Promise<SourceListRecordDto[]> {
     const builder = this.mapper.builder();
     if (searchDto.name) {
       builder.where("name like ?", `%${searchDto.name}%`);
     }
     if (searchDto.projectId) {
-      builder.where("projectId = ?", searchDto.projectId);
+      builder.where("projects.projectId = ?", searchDto.projectId);
     }
     if (searchDto.shortcutId) {
       builder.where("shortcutId = ?", searchDto.shortcutId);
@@ -39,7 +39,21 @@ export class SourceService extends BaseService<SourceEntity> {
     );
 
     builder.order("createdAt", false);
-    return this.mapper.list(builder);
+    const records = (await this.mapper.list(builder)) as SourceListRecordDto[];
+    let shortcutIds = records.map((it) => it.shortcutId);
+    shortcutIds = [...new Set(shortcutIds)];
+    const shortcuts = await this.shortcutService.list({
+      ids: shortcutIds,
+    });
+    let shortcutMap = new Map<number, ShortcutEntity>();
+    shortcuts.forEach((it) => {
+      shortcutMap.set(it.id, it);
+    });
+    records.forEach((it) => {
+      it.shortcut = shortcutMap.get(it.shortcutId)!;
+    });
+
+    return records;
   }
 
   add(entity: SourceCreateDto): Promise<unknown> {

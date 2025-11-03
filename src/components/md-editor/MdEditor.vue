@@ -15,7 +15,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "input"]);
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const editor = shallowRef<Vditor>();
@@ -36,11 +36,12 @@ onMounted(() => {
     minHeight: 400,
     width: "100%",
     cache: { enable: false },
-    outline: { enable: true, position: "left" },
+    outline: { enable: false, position: "left" },
     mode: "wysiwyg",
     customWysiwygToolbar: () => {},
     input: (value: string) => {
       emit("update:modelValue", value);
+      emit("input", value);
     },
     after: () => {
       setTheme();

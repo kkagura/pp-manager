@@ -1,5 +1,5 @@
 <template>
-  <PageContainer draggable @fileDrop="handleFileDrop">
+  <PageContainer @fileDrop="handleFileDrop">
     <SearchBar @search="tableContext.search" @reset="tableContext.reset">
       <SearchItem label="资源名称">
         <el-input
