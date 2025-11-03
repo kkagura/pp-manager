@@ -7,7 +7,6 @@ import {
   SourceListSearchDto,
 } from "./source.dto";
 import { inject, injectable } from "@/di";
-import { logMethod } from "@/utils/log";
 import squel from "squel";
 import { type ShortcutService } from "../shortcut/shortcut.service";
 import { ShortcutEntity } from "../shortcut/shortcut.entity";
@@ -20,7 +19,7 @@ export class SourceService extends BaseService<SourceEntity> {
 
   @inject(ShortcutServiceKey)
   shortcutService: ShortcutService;
-  @logMethod()
+
   list(searchDto: SourceListSearchDto): Promise<SourceEntity[]> {
     const builder = this.mapper.builder();
     if (searchDto.name) {
@@ -43,7 +42,6 @@ export class SourceService extends BaseService<SourceEntity> {
     return this.mapper.list(builder);
   }
 
-  @logMethod()
   add(entity: SourceCreateDto): Promise<unknown> {
     return this.mapper.add({
       ...entity,
@@ -52,7 +50,6 @@ export class SourceService extends BaseService<SourceEntity> {
     });
   }
 
-  @logMethod()
   async page(
     params: PageParams<SourceListSearchDto>
   ): Promise<Page<SourceListRecordDto>> {

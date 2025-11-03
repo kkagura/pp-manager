@@ -4,7 +4,6 @@ import { type ShortcutMapper } from "./shortcut.mapper";
 import { ShortcutMapperKey, ShortcutServiceKey } from "./key";
 import { ShortcutCreateDto, ShortcutListSearchDto } from "./shortcut.dto";
 import { inject, injectable } from "@/di";
-import { logMethod } from "@/utils/log";
 import { type SourceService } from "../source/source.service";
 import { SourceServiceKey } from "../source/key";
 
@@ -16,7 +15,6 @@ export class ShortcutService extends BaseService<ShortcutEntity> {
   @inject(SourceServiceKey)
   sourceService: SourceService;
 
-  @logMethod()
   list(searchDto: ShortcutListSearchDto): Promise<ShortcutEntity[]> {
     const builder = this.mapper.builder();
     if (searchDto.name) {
@@ -26,12 +24,10 @@ export class ShortcutService extends BaseService<ShortcutEntity> {
     return this.mapper.list(builder);
   }
 
-  @logMethod()
   add(entity: ShortcutCreateDto): Promise<unknown> {
     return this.mapper.add(entity);
   }
 
-  @logMethod()
   async page(
     params: PageParams<ShortcutListSearchDto>
   ): Promise<Page<ShortcutEntity>> {

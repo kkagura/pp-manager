@@ -3,7 +3,6 @@ import { ProjectEntity } from "./project.entity";
 import { type ProjectMapper } from "./project.mapper";
 import { ProjectCreateDto, ProjectListSearchDto } from "./project.dto";
 import { inject, injectable } from "@/di";
-import { logMethod } from "@/utils/log";
 import { type SourceService } from "../source/source.service";
 import { SourceServiceKey } from "../source/key";
 import { ProjectMapperKey, ProjectServiceKey } from "./key";
@@ -15,7 +14,6 @@ export class ProjectService extends BaseService<ProjectEntity> {
   @inject(SourceServiceKey)
   sourceService: SourceService;
 
-  @logMethod()
   list(searchDto: ProjectListSearchDto): Promise<ProjectEntity[]> {
     const builder = this.mapper.builder();
     if (searchDto.name) {
@@ -25,12 +23,10 @@ export class ProjectService extends BaseService<ProjectEntity> {
     return this.mapper.list(builder);
   }
 
-  @logMethod()
   add(entity: ProjectCreateDto): Promise<unknown> {
     return this.mapper.add(entity);
   }
 
-  @logMethod()
   async page(
     params: PageParams<ProjectListSearchDto>
   ): Promise<Page<ProjectEntity>> {
