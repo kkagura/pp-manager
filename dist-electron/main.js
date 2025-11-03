@@ -2030,7 +2030,9 @@ log.transports.console.format = "{h}:{i}:{s} {text}";
 log.transports.file.format = "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
 const require$2 = createRequire(import.meta.url);
 const sqlite3 = require$2("sqlite3");
-const db = new sqlite3.Database("pp.db");
+const dbPath = path$6.join(app.getPath("userData"), "pp.db");
+console.log(dbPath);
+const db = new sqlite3.Database(dbPath);
 function query(sql, params) {
   return new Promise((resolve, reject) => {
     log.info(`[db] query: ${sql}`);
@@ -2336,6 +2338,9 @@ function createWindow() {
   );
   ipcMain.handle("getAppPath", async (event) => {
     return app.getAppPath();
+  });
+  ipcMain.handle("getPath", async (event, name) => {
+    return app.getPath(name);
   });
   ipcMain.handle("getFileInfo", async (event, filePath) => {
     return getFileInfo(filePath);

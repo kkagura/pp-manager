@@ -3,6 +3,7 @@
     <PageContainer>
       <PageHeader :title="title"></PageHeader>
       <PageContent>
+        {{ appPath }}
         <div class="source-list">
           <div
             class="source-item"
@@ -53,6 +54,12 @@ import HomeSourceModal from "./HomeSourceModal.vue";
 import { ElMessage } from "element-plus";
 import MdEditor from "@/components/md-editor/MdEditor.vue";
 import { debounce } from "@/utils/debounce";
+
+const appPath = ref("");
+(window.ipcRenderer as any).getAppPath().then((path: string) => {
+  appPath.value = path;
+  console.log(appPath.value);
+});
 
 const sourceService = getService(SourceServiceKey);
 const projectService = getService(ProjectServiceKey);

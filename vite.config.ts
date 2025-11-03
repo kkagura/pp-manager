@@ -37,6 +37,9 @@ export default defineConfig({
   },
   build: {
     target: "ES2020",
+    rollupOptions: {
+      external: ["bindings", "file-uri-to-path"],
+    }
   },
   esbuild: {
     target: "ES2020",

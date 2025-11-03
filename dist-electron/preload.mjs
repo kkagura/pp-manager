@@ -37,6 +37,9 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   },
   getAppPath() {
     return electron.ipcRenderer.invoke("getAppPath");
+  },
+  getPath(name) {
+    return electron.ipcRenderer.invoke("getPath", name);
   }
   // You can expose other APTs you need here.
   // ...

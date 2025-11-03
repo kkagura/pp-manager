@@ -8,7 +8,7 @@
         :key="menu.path"
         @click="handleMenuClick(menu)"
       >
-        <template v-if="menu.meta">
+        <template v-if="menu.meta?.icon">
           <Iconfont :icon-name="menu.meta.icon"></Iconfont>
         </template>
       </div>

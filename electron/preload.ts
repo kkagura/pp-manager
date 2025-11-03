@@ -43,6 +43,10 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     return ipcRenderer.invoke("getAppPath");
   },
 
+  getPath(name: any) {
+    return ipcRenderer.invoke("getPath", name);
+  },
+
   // You can expose other APTs you need here.
   // ...
 });

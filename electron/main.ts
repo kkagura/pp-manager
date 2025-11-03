@@ -97,6 +97,10 @@ function createWindow() {
     return app.getAppPath();
   });
 
+  ipcMain.handle("getPath", async (event, name: any) => {
+    return app.getPath(name);
+  });
+
   ipcMain.handle("getFileInfo", async (event, filePath: string) => {
     return getFileInfo(filePath);
   });
