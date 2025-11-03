@@ -62,6 +62,10 @@ const props = defineProps({
   id: {
     type: Number,
   },
+  initialPath: {
+    type: String,
+    default: "",
+  },
 });
 
 const emit = defineEmits<{
@@ -97,6 +101,19 @@ const handleOpen = () => {
     shortcutService.get(props.id).then((res) => {
       Object.assign(model.value, res);
     });
+  } else {
+    if (props.initialPath) {
+      model.value.path = props.initialPath;
+      // 自动填充名称（使用文件夹名）
+      const pathParts = props.initialPath.split(/[\\/]/);
+      const folderName = pathParts[pathParts.length - 1] || props.initialPath;
+      // 移除文件后缀名
+      const dotIndex = folderName.lastIndexOf(".");
+      const displayName = dotIndex > 0 ? folderName.substring(0, dotIndex) : folderName;
+      if (!model.value.name) {
+        model.value.name = displayName;
+      }
+    }
   }
 };
 

@@ -15,6 +15,9 @@ import require$$0$3 from "events";
 import require$$0$4 from "http";
 import require$$1$1 from "https";
 import { createRequire } from "module";
+import { exec } from "node:child_process";
+import { stat } from "node:fs/promises";
+import fs$5 from "node:fs";
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
 }
@@ -2025,8 +2028,8 @@ const log = /* @__PURE__ */ getDefaultExportFromCjs(main_1);
 log.initialize();
 log.transports.console.format = "{h}:{i}:{s} {text}";
 log.transports.file.format = "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
-const require$1 = createRequire(import.meta.url);
-const sqlite3 = require$1("sqlite3");
+const require$2 = createRequire(import.meta.url);
+const sqlite3 = require$2("sqlite3");
 const db = new sqlite3.Database("pp.db");
 function query(sql, params) {
   return new Promise((resolve, reject) => {
@@ -2219,6 +2222,60 @@ async function migrate() {
   await update2();
   await update3();
 }
+const require$1 = createRequire(import.meta.url);
+const ws = require$1("windows-shortcuts");
+async function isDirectory(filePath) {
+  try {
+    const stats = await stat(filePath);
+    return stats.isDirectory();
+  } catch (error) {
+    return false;
+  }
+}
+async function getFileInfo(filePath) {
+  const isDir = await isDirectory(filePath);
+  if (isDir) {
+    return {
+      isDirectory: true,
+      filePath,
+      isLink: false,
+      realPath: filePath
+    };
+  }
+  return new Promise((resolve) => {
+    fs$5.lstat(filePath, (err, _) => {
+      let realPath = filePath;
+      if (!err) {
+        ws.query(filePath, (err2, info) => {
+          if (!err2 && info) {
+            realPath = info.target || filePath;
+            const isLink = realPath && filePath && path$6.resolve(realPath) !== path$6.resolve(filePath);
+            resolve({
+              isDirectory: false,
+              filePath,
+              isLink,
+              realPath
+            });
+          } else {
+            resolve({
+              isDirectory: false,
+              filePath,
+              isLink: false,
+              realPath
+            });
+          }
+        });
+      } else {
+        resolve({
+          isDirectory: false,
+          filePath,
+          isLink: false,
+          realPath
+        });
+      }
+    });
+  });
+}
 const __dirname$1 = path$6.dirname(fileURLToPath(import.meta.url));
 process.env.APP_ROOT = path$6.join(__dirname$1, "..");
 const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
@@ -2249,6 +2306,33 @@ function createWindow() {
   });
   ipcMain.handle("dbExecute", async (event, sql) => {
     return execute(sql);
+  });
+  ipcMain.handle(
+    "openSource",
+    async (event, params) => {
+      const { exe, args } = params;
+      return new Promise((resolve, reject) => {
+        log.info(`openSource: ${exe} ${args}`);
+        exec(`"${exe}" "${args}"`, (error, stdout, stderr) => {
+          if (error) {
+            reject(error);
+            log.error(`openSource error: ${error}`);
+          } else if (stderr) {
+            reject(stderr);
+            log.error(`openSource stderr: ${stderr}`);
+          } else {
+            resolve(stdout);
+            log.info(`openSource stdout: ${stdout}`);
+          }
+        });
+      });
+    }
+  );
+  ipcMain.handle("getAppPath", async (event) => {
+    return app.getAppPath();
+  });
+  ipcMain.handle("getFileInfo", async (event, filePath) => {
+    return getFileInfo(filePath);
   });
 }
 app.on("window-all-closed", () => {

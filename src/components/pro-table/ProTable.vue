@@ -1,6 +1,7 @@
 <template>
   <div class="pro-table-wrapper" ref="wrapperRef">
     <el-table
+      ref="tableRef"
       v-bind="tableProps"
       :data="records"
       :height="fixHeader ? tableBodyHeight : undefined"
@@ -28,7 +29,7 @@
 import { useResizeObserver } from "@/hooks/use-resize-observer";
 import { UseTableContext } from "@/hooks/use-table";
 import { omit } from "@/utils/object";
-import { TableProps } from "element-plus";
+import { TableInstance, TableProps } from "element-plus";
 import { computed, ref, toRefs } from "vue";
 
 type IProTableProps = Omit<TableProps<T>, "data" | "height"> & {
@@ -50,6 +51,19 @@ const tableProps = computed(() => {
   return omit(props, ["fixHeader"]);
 });
 
+const debounce = (fn: Function, delay: number = 100) => {
+  let timer: NodeJS.Timeout | null = null;
+  return (...args: any[]) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+};
+
+const tableRef = ref<TableInstance>();
+const deboundResize = debounce(() => {
+  // tableRef.value?.doLayout();
+});
+
 const wrapperRef = ref<HTMLElement>();
 const tableBodyHeight = ref(0);
 useResizeObserver(wrapperRef, () => {
@@ -65,6 +79,7 @@ useResizeObserver(wrapperRef, () => {
     height -= pagination.clientHeight;
   }
   tableBodyHeight.value = height;
+  deboundResize();
 });
 </script>
 <style scoped lang="less">

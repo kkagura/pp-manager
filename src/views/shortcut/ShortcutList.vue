@@ -1,5 +1,5 @@
 <template>
-  <PageContainer>
+  <PageContainer @fileDrop="handleFileDrop">
     <SearchBar @search="tableContext.search" @reset="tableContext.reset">
       <SearchItem label="快捷方式名称">
         <el-input
@@ -63,6 +63,7 @@
     </PageContent>
     <ShortcutModal
       :id="formContext.id"
+      :initial-path="formContext.initialPath"
       v-model:visible="formContext.visible"
       @success="tableContext.search"
     />
@@ -95,14 +96,17 @@ const { searchParams } = toRefs(tableContext);
 const formContext = reactive({
   visible: false,
   id: undefined as number | undefined,
+  initialPath: "" as string,
 });
 const handleAdd = () => {
   formContext.id = undefined;
+  formContext.initialPath = "";
   formContext.visible = true;
 };
 
 const handleEdit = (id: number) => {
   formContext.id = id;
+  formContext.initialPath = "";
   formContext.visible = true;
 };
 
@@ -115,6 +119,18 @@ const handleDelete = (id: number) => {
   shortcutService.delete(id).then(() => {
     tableContext.search();
   });
+};
+
+const handleFileDrop = (data: {
+  filePath: string;
+  isDirectory: boolean;
+  realPath: string;
+}) => {
+  if (data.isDirectory) return;
+  // 打开新增弹窗，并自动填充路径
+  formContext.id = undefined;
+  formContext.initialPath = data.realPath;
+  formContext.visible = true;
 };
 
 tableContext.search();

@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ProjectServiceKey } from "@/modules/project/project.service";
+import { ProjectServiceKey } from "@/modules";
 import { Plus } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { getService } from "@/modules";

@@ -18,6 +18,15 @@
             placeholder="请输入名称"
           />
         </el-form-item>
+        <el-form-item label="描述" prop="description">
+          <el-input
+            v-model="model.description"
+            required
+            :maxlength="100"
+            clearable
+            placeholder="请输入描述"
+          />
+        </el-form-item>
         <el-form-item label="路径" prop="path">
           <el-input
             v-model="model.path"
@@ -89,6 +98,10 @@ const props = defineProps({
   id: {
     type: Number,
   },
+  initialPath: {
+    type: String,
+    default: "",
+  },
 });
 
 const emit = defineEmits<{
@@ -116,6 +129,7 @@ const model = ref<SourceCreateDto>({
 const formRef = ref<FormInstance>();
 const rules = ref<FormRules>({
   name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+  description: [{ required: true, message: "请输入描述", trigger: "blur" }],
   path: [{ required: true, message: "请输入路径", trigger: "blur" }],
   projectId: [{ required: true, message: "请选择所属项目", trigger: "blur" }],
   shortcutId: [{ required: true, message: "请选择快捷方式", trigger: "blur" }],
@@ -123,14 +137,34 @@ const rules = ref<FormRules>({
 
 const handleOpen = () => {
   if (props.id !== undefined) {
-    shortcutService.get(props.id).then((res) => {
+    sourceService.get(props.id).then((res) => {
+      console.log("res", res);
       Object.assign(model.value, res);
     });
+  } else {
+    // 新增时，如果提供了初始路径，则自动填充
+    if (props.initialPath) {
+      model.value.path = props.initialPath;
+      // 自动填充名称（使用文件夹名）
+      const pathParts = props.initialPath.split(/[\\/]/);
+      const folderName = pathParts[pathParts.length - 1] || props.initialPath;
+      if (!model.value.name) {
+        model.value.name = folderName;
+      }
+    }
   }
 };
 
 const handleClosed = () => {
   formRef.value?.resetFields();
+  // 重置 model
+  model.value = {
+    name: "",
+    path: "",
+    shortcutId: "",
+    projectId: "",
+    description: "",
+  };
 };
 
 const handleCancel = () => {

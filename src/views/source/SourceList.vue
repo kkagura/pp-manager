@@ -1,5 +1,5 @@
 <template>
-  <PageContainer>
+  <PageContainer draggable @fileDrop="handleFileDrop">
     <SearchBar @search="tableContext.search" @reset="tableContext.reset">
       <SearchItem label="资源名称">
         <el-input
@@ -24,12 +24,20 @@
         ></el-table-column>
         <el-table-column
           min-width="100"
+          prop="description"
+          label="描述"
+        ></el-table-column>
+        <el-table-column
+          min-width="100"
           prop="path"
           label="路径"
         ></el-table-column>
         <el-table-column min-width="100" prop="projectName" label="所属项目">
         </el-table-column>
         <el-table-column min-width="100" prop="shortcut" label="快捷方式">
+          <template #default="scope">
+            <span>{{ scope.row.shortcut?.name }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           min-width="100"
@@ -59,6 +67,7 @@
     </PageContent>
     <SourceModal
       :id="formContext.id"
+      :initial-path="formContext.initialPath"
       v-model:visible="formContext.visible"
       @success="tableContext.search"
     />
@@ -89,14 +98,20 @@ const { searchParams } = toRefs(tableContext);
 const formContext = reactive({
   visible: false,
   id: undefined as number | undefined,
+  initialPath: "" as string,
 });
 const handleAdd = () => {
   formContext.id = undefined;
+  formContext.initialPath = "";
   formContext.visible = true;
 };
 
 const handleLaunch = (row: SourceListRecordDto) => {
-  console.log(row);
+  const event = {
+    exe: row.shortcut.path,
+    args: row.path,
+  };
+  (window.ipcRenderer as any).openSource(event);
 };
 
 const handleEdit = (id: number) => {
@@ -108,6 +123,13 @@ const handleDelete = (id: number) => {
   sourceService.delete(id).then(() => {
     tableContext.search();
   });
+};
+const handleFileDrop = (data: { filePath: string; isDirectory: boolean }) => {
+  // if (!data.isDirectory) return;
+  // 打开新增弹窗，并自动填充路径
+  formContext.id = undefined;
+  formContext.initialPath = data.filePath;
+  formContext.visible = true;
 };
 
 tableContext.search();

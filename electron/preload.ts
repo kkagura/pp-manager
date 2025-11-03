@@ -31,6 +31,18 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     return ipcRenderer.invoke("dbExecute", sql);
   },
 
+  openSource(event: { exe: string; args: string }) {
+    return ipcRenderer.invoke("openSource", event);
+  },
+
+  getFileInfo(path: string) {
+    return ipcRenderer.invoke("getFileInfo", path);
+  },
+
+  getAppPath() {
+    return ipcRenderer.invoke("getAppPath");
+  },
+
   // You can expose other APTs you need here.
   // ...
 });

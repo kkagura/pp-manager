@@ -28,6 +28,15 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   },
   dbExecute(sql) {
     return electron.ipcRenderer.invoke("dbExecute", sql);
+  },
+  openSource(event) {
+    return electron.ipcRenderer.invoke("openSource", event);
+  },
+  getFileInfo(path) {
+    return electron.ipcRenderer.invoke("getFileInfo", path);
+  },
+  getAppPath() {
+    return electron.ipcRenderer.invoke("getAppPath");
   }
   // You can expose other APTs you need here.
   // ...

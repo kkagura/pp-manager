@@ -3,6 +3,10 @@ import { app, BrowserWindow, ipcMain, Menu } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { query, queryOne, execute, migrate } from "./db";
+import { exec } from "node:child_process";
+import { log } from "./log";
+import { stat } from "node:fs/promises";
+import { getFileInfo } from "./utils/file";
 
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -58,6 +62,36 @@ function createWindow() {
   });
   ipcMain.handle("dbExecute", async (event, sql) => {
     return execute(sql);
+  });
+  ipcMain.handle(
+    "openSource",
+    async (event, params: { exe: string; args: string }) => {
+      // 通过child_process.spawn启动进程
+      const { exe, args } = params;
+      return new Promise((resolve, reject) => {
+        log.info(`openSource: ${exe} ${args}`);
+        exec(`"${exe}" "${args}"`, (error, stdout, stderr) => {
+          if (error) {
+            reject(error);
+            log.error(`openSource error: ${error}`);
+          } else if (stderr) {
+            reject(stderr);
+            log.error(`openSource stderr: ${stderr}`);
+          } else {
+            resolve(stdout);
+            log.info(`openSource stdout: ${stdout}`);
+          }
+        });
+      });
+    }
+  );
+
+  ipcMain.handle("getAppPath", async (event) => {
+    return app.getAppPath();
+  });
+
+  ipcMain.handle("getFileInfo", async (event, filePath: string) => {
+    return getFileInfo(filePath);
   });
 }
 

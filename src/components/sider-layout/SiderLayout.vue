@@ -47,6 +47,7 @@ const handleTransitionAppreared = () => {
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     // .layout-tabs {}
     .layout-content {
       flex: 1;
