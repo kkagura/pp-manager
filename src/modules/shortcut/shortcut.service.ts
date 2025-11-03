@@ -1,13 +1,13 @@
 import { BaseService, Page, PageParams } from "../base/base.service";
 import { ShortcutEntity } from "./shortcut.entity";
-import { type ShortcutMapper, ShortcutMapperKey } from "./shortcut.mapper";
+import { type ShortcutMapper } from "./shortcut.mapper";
+import { ShortcutMapperKey, ShortcutServiceKey } from "./key";
 import { ShortcutCreateDto, ShortcutListSearchDto } from "./shortcut.dto";
-import { inject, injectable, InjectionKey } from "@/di";
+import { inject, injectable } from "@/di";
 import { logMethod } from "@/utils/log";
-import { SourceService, SourceServiceKey } from "../source/source.service";
+import { type SourceService } from "../source/source.service";
+import { SourceServiceKey } from "../source/key";
 
-export const ShortcutServiceKey: InjectionKey<ShortcutService> =
-  Symbol("ShortcutService");
 @injectable(ShortcutServiceKey)
 export class ShortcutService extends BaseService<ShortcutEntity> {
   @inject(ShortcutMapperKey)
@@ -38,6 +38,9 @@ export class ShortcutService extends BaseService<ShortcutEntity> {
     const builder = this.pageBuilder(params);
     if (params.name) {
       builder.where("name like ?", `%${params.name}%`);
+    }
+    if (params.ids?.length) {
+      builder.where("id in (?)", params.ids);
     }
     const total = await this.mapper.total(builder);
     const records = await this.mapper.list(builder);

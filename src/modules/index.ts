@@ -1,13 +1,15 @@
 import { Container, InjectionKey } from "@/di";
-import { ProjectMapper, ProjectMapperKey } from "./project/project.mapper";
-import { ProjectService, ProjectServiceKey } from "./project/project.service";
-import { ShortcutMapper, ShortcutMapperKey } from "./shortcut/shortcut.mapper";
-import {
-  ShortcutService,
-  ShortcutServiceKey,
-} from "./shortcut/shortcut.service";
-import { SourceService, SourceServiceKey } from "./source/source.service";
-import { SourceMapper, SourceMapperKey } from "./source/source.mapper";
+import { ProjectMapper } from "./project/project.mapper";
+import { ProjectMapperKey, ProjectServiceKey } from "./project/key";
+import { ProjectService } from "./project/project.service";
+import { ShortcutMapper } from "./shortcut/shortcut.mapper";
+import { ShortcutMapperKey } from "./shortcut/key";
+import { ShortcutServiceKey } from "./shortcut/key";
+import { SourceService } from "./source/source.service";
+import { SourceServiceKey } from "./source/key";
+import { SourceMapper } from "./source/source.mapper";
+import { SourceMapperKey } from "./source/key";
+import { ShortcutService } from "./shortcut/shortcut.service";
 
 const container = new Container();
 

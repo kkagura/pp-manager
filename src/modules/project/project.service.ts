@@ -1,13 +1,12 @@
 import { BaseService, Page, PageParams } from "../base/base.service";
 import { ProjectEntity } from "./project.entity";
-import { type ProjectMapper, ProjectMapperKey } from "./project.mapper";
+import { type ProjectMapper } from "./project.mapper";
 import { ProjectCreateDto, ProjectListSearchDto } from "./project.dto";
-import { inject, injectable, InjectionKey } from "@/di";
+import { inject, injectable } from "@/di";
 import { logMethod } from "@/utils/log";
-import { SourceService, SourceServiceKey } from "../source/source.service";
-
-export const ProjectServiceKey: InjectionKey<ProjectService> =
-  Symbol("ProjectService");
+import { type SourceService } from "../source/source.service";
+import { SourceServiceKey } from "../source/key";
+import { ProjectMapperKey, ProjectServiceKey } from "./key";
 @injectable(ProjectServiceKey)
 export class ProjectService extends BaseService<ProjectEntity> {
   @inject(ProjectMapperKey)

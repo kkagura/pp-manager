@@ -1,5 +1,6 @@
 export class ShortcutListSearchDto {
   name?: string;
+  ids?: number[];
 }
 
 export class ShortcutCreateDto {

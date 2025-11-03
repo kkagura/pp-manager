@@ -1,18 +1,25 @@
 import { BaseService, Page, PageParams } from "../base/base.service";
 import { SourceEntity } from "./source.entity";
-import { type SourceMapper, SourceMapperKey } from "./source.mapper";
-import { SourceCreateDto, SourceListSearchDto } from "./source.dto";
-import { inject, injectable, InjectionKey } from "@/di";
+import { type SourceMapper } from "./source.mapper";
+import {
+  SourceCreateDto,
+  SourceListRecordDto,
+  SourceListSearchDto,
+} from "./source.dto";
+import { inject, injectable } from "@/di";
 import { logMethod } from "@/utils/log";
 import squel from "squel";
-
-export const SourceServiceKey: InjectionKey<SourceService> =
-  Symbol("SourceService");
+import { type ShortcutService } from "../shortcut/shortcut.service";
+import { ShortcutEntity } from "../shortcut/shortcut.entity";
+import { SourceMapperKey, SourceServiceKey } from "./key";
+import { ShortcutServiceKey } from "../shortcut/key";
 @injectable(SourceServiceKey)
 export class SourceService extends BaseService<SourceEntity> {
   @inject(SourceMapperKey)
   mapper: SourceMapper;
 
+  @inject(ShortcutServiceKey)
+  shortcutService: ShortcutService;
   @logMethod()
   list(searchDto: SourceListSearchDto): Promise<SourceEntity[]> {
     const builder = this.mapper.builder();
@@ -48,7 +55,7 @@ export class SourceService extends BaseService<SourceEntity> {
   @logMethod()
   async page(
     params: PageParams<SourceListSearchDto>
-  ): Promise<Page<SourceEntity>> {
+  ): Promise<Page<SourceListRecordDto>> {
     const builder = this.pageBuilder(params);
     if (params.name) {
       builder.where("name like ?", `%${params.name}%`);
@@ -62,7 +69,21 @@ export class SourceService extends BaseService<SourceEntity> {
       `${this.mapper.tableName}.projectId=projects.projectId`
     );
 
-    const records = await this.mapper.list(recordBuilder);
+    const records = (await this.mapper.list(
+      recordBuilder
+    )) as SourceListRecordDto[];
+    let shortcutIds = records.map((it) => it.shortcutId);
+    shortcutIds = [...new Set(shortcutIds)];
+    const shortcuts = await this.shortcutService.list({
+      ids: shortcutIds,
+    });
+    let shortcutMap = new Map<number, ShortcutEntity>();
+    shortcuts.forEach((it) => {
+      shortcutMap.set(it.id, it);
+    });
+    records.forEach((it) => {
+      it.shortcut = shortcutMap.get(it.shortcutId)!;
+    });
     return {
       records,
       total,

@@ -36,8 +36,11 @@
           prop="createdAt"
           label="创建时间"
         ></el-table-column>
-        <el-table-column width="140" prop="action" label="操作" align="center">
+        <el-table-column width="160" prop="action" label="操作" align="center">
           <template #default="scope">
+            <el-button link type="primary" @click="handleLaunch(scope.row)"
+              >启动</el-button
+            >
             <el-button link type="primary" @click="handleEdit(scope.row.id)"
               >编辑</el-button
             >
@@ -70,6 +73,7 @@ import ProTable from "@/components/pro-table/ProTable.vue";
 import { useTable } from "@/hooks/use-table";
 import { reactive, toRefs } from "vue";
 import SourceModal from "./components/SourceModal.vue";
+import { SourceListRecordDto } from "@/modules/source/source.dto";
 
 const sourceService = getService(SourceServiceKey);
 
@@ -89,6 +93,10 @@ const formContext = reactive({
 const handleAdd = () => {
   formContext.id = undefined;
   formContext.visible = true;
+};
+
+const handleLaunch = (row: SourceListRecordDto) => {
+  console.log(row);
 };
 
 const handleEdit = (id: number) => {
