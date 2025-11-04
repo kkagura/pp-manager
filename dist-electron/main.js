@@ -3,7 +3,7 @@ var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { en
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 var _a;
 const __filename = fileURLToPath(import.meta.url);
-import require$$0$5, { app, BrowserWindow, Menu, ipcMain, nativeImage, Tray } from "electron";
+import require$$0$5, { app, BrowserWindow, globalShortcut, Menu, ipcMain, nativeImage, Tray } from "electron";
 import { fileURLToPath } from "node:url";
 import path$6 from "node:path";
 import require$$2 from "path";
@@ -2354,6 +2354,8 @@ function createWindow() {
       event.preventDefault();
       win == null ? void 0 : win.hide();
       win == null ? void 0 : win.setSkipTaskbar(true);
+    } else {
+      globalShortcut.unregisterAll();
     }
   });
 }
@@ -2387,7 +2389,6 @@ function createTray() {
     {
       label: "显示/隐藏",
       click: () => {
-        console.log("isVisible:", win == null ? void 0 : win.isVisible());
         if (win == null ? void 0 : win.isVisible()) {
           win == null ? void 0 : win.hide();
           win == null ? void 0 : win.setSkipTaskbar(true);
@@ -2420,6 +2421,12 @@ function createTray() {
   });
 }
 app.whenReady().then(() => {
+  globalShortcut.register("CommandOrControl+Q", () => {
+    if (!(win == null ? void 0 : win.isVisible())) {
+      win == null ? void 0 : win.show();
+      win == null ? void 0 : win.setSkipTaskbar(false);
+    }
+  });
   migrate().then(() => {
     createWindow();
     createTray();

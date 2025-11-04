@@ -1,4 +1,12 @@
-import { app, BrowserWindow, ipcMain, Menu, nativeImage, Tray } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  nativeImage,
+  Tray,
+  globalShortcut,
+} from "electron";
 // import { createRequire } from 'node:module'
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -114,6 +122,8 @@ function createWindow() {
       event.preventDefault();
       win?.hide();
       win?.setSkipTaskbar(true);
+    } else {
+      globalShortcut.unregisterAll();
     }
   });
 }
@@ -158,7 +168,6 @@ function createTray() {
     {
       label: "显示/隐藏",
       click: () => {
-        console.log('isVisible:', win?.isVisible());
         if (win?.isVisible()) {
           win?.hide();
           win?.setSkipTaskbar(true);
@@ -199,6 +208,12 @@ function createTray() {
 }
 
 app.whenReady().then(() => {
+  globalShortcut.register("CommandOrControl+Q", () => {
+    if (!win?.isVisible()) {
+      win?.show();
+      win?.setSkipTaskbar(false);
+    }
+  });
   migrate().then(() => {
     createWindow();
     createTray();

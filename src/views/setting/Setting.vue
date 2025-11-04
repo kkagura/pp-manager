@@ -59,7 +59,22 @@
           <div class="form-item">
             <div class="form-item-label">调试工具</div>
             <div class="form-item-content">
-              <el-button type="primary" @click="openDevTools">打开调试工具</el-button>
+              <el-button type="primary" @click="openDevTools"
+                >打开调试工具</el-button
+              >
+            </div>
+          </div>
+          <div class="form-item">
+            <div class="form-item-label">唤醒快捷键</div>
+            <div class="form-item-content">
+              <el-select @change="changeShortcutKey" v-model="setting.shortcutKey" placeholder="请选择">
+                <el-option
+                  v-for="option in shortcutKeyOptions"
+                  :key="option.value"
+                  :label="option.label"
+                  :value="option.value"
+                ></el-option>
+              </el-select>
             </div>
           </div>
         </div>
@@ -84,10 +99,22 @@ const themeOptions = ref([
   },
 ]);
 
+const shortcutKeyOptions = ref([
+  {
+    label: "Ctrl+Q",
+    value: "CommandOrControl+Q",
+  },
+  // ...todo
+]);
+
 const setting = useSettingStore();
 
 const openDevTools = () => {
   (window.ipcRenderer as any).openDevTools();
+};
+
+const changeShortcutKey = () => {
+  // todo ...
 };
 </script>
 <style scoped lang="less">
