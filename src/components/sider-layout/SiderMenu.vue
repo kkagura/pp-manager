@@ -3,6 +3,7 @@
     <div class="menu-list">
       <div
         class="menu-item"
+        :class="{ 'is-active': isMenuActive(menu) }"
         :title="menu.meta.title"
         v-for="menu in menus"
         :key="menu.path"
@@ -19,16 +20,23 @@
 <script lang="ts" setup>
 import { siderRoutes } from "@/router";
 import Iconfont from "../iconfont/Iconfont.vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
+import { computed } from "vue";
 
 const menus = siderRoutes.filter(
   (menu) => menu.meta && menu.meta.menu === true
 );
 
 const router = useRouter();
+const route = useRoute();
 const handleMenuClick = (menu: RouteRecordRaw) => {
   router.push(menu.path);
+};
+const isMenuActive = (menu: RouteRecordRaw) => {
+  if (route.meta?.activeMenu === menu.name) return true;
+  if (route.name === menu.name) return true;
+  return false;
 };
 </script>
 <style scoped lang="less">
@@ -52,6 +60,9 @@ const handleMenuClick = (menu: RouteRecordRaw) => {
       transition: all 0.3s ease;
       color: var(--text-color);
       &:hover {
+        background-color: var(--menu-hover-bg-color);
+      }
+      &.is-active {
         background-color: var(--menu-hover-bg-color);
       }
     }

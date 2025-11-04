@@ -6,7 +6,7 @@ const themes = [
     key: "light",
     cssVars: {
       "--app-bg-color": "#F0F0F0",
-      "--menu-hover-bg-color": "#EAEAEA",
+      "--menu-hover-bg-color": "#E4E4E4",
       "--main-section-bg-color": "#fff",
       "--main-section-bg-color-secondary": "#F8F8F8",
       "--main-section-bg-color-third": "#F0F0F0",

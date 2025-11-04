@@ -28,6 +28,7 @@ export const siderRoutes = [
     meta: {
       title: "新增工作区",
       menu: false,
+      activeMenu: "WorkSpaceList",
     },
   },
   {
@@ -37,6 +38,7 @@ export const siderRoutes = [
     meta: {
       title: "编辑工作区",
       menu: false,
+      activeMenu: "WorkSpaceList",
     },
   },
   {

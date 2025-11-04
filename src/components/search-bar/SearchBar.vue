@@ -47,7 +47,7 @@ export default defineComponent({
     // 监听宽度变化
     useResizeObserver(searchBarRef, (entries) => {
       const entry = entries[0];
-      if (entry) {
+      if (entry?.contentRect) {
         const width = entry.contentRect.width;
         columns.value = calculateColumns(width);
       }
