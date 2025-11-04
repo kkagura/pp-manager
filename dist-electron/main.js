@@ -3,7 +3,7 @@ var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { en
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 var _a;
 const __filename = fileURLToPath(import.meta.url);
-import require$$0$5, { app, BrowserWindow, Menu, ipcMain } from "electron";
+import require$$0$5, { app, BrowserWindow, Menu, ipcMain, nativeImage, Tray } from "electron";
 import { fileURLToPath } from "node:url";
 import path$6 from "node:path";
 import require$$2 from "path";
@@ -2283,7 +2283,8 @@ const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
 const MAIN_DIST = path$6.join(process.env.APP_ROOT, "dist-electron");
 const RENDERER_DIST = path$6.join(process.env.APP_ROOT, "dist");
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path$6.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
-let win;
+let win, tray;
+let willQuitApp = false;
 function createWindow() {
   Menu.setApplicationMenu(null);
   win = new BrowserWindow({
@@ -2348,6 +2349,13 @@ function createWindow() {
   ipcMain.handle("openDevTools", (event) => {
     win == null ? void 0 : win.webContents.openDevTools();
   });
+  win.on("close", (event) => {
+    if (!willQuitApp) {
+      event.preventDefault();
+      win == null ? void 0 : win.hide();
+      win == null ? void 0 : win.setSkipTaskbar(true);
+    }
+  });
 }
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -2371,8 +2379,51 @@ app.on("activate", () => {
     createWindow();
   }
 });
+function createTray() {
+  const iconPath = path$6.join(__dirname$1, "../public", "icon/w_32x32.ico");
+  const trayIcon = nativeImage.createFromPath(iconPath);
+  tray = new Tray(trayIcon);
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: "显示/隐藏",
+      click: () => {
+        console.log("isVisible:", win == null ? void 0 : win.isVisible());
+        if (win == null ? void 0 : win.isVisible()) {
+          win == null ? void 0 : win.hide();
+          win == null ? void 0 : win.setSkipTaskbar(true);
+        } else {
+          win == null ? void 0 : win.show();
+          win == null ? void 0 : win.setSkipTaskbar(false);
+        }
+      }
+    },
+    { type: "separator" },
+    // 分割线
+    {
+      label: "退出",
+      click: () => {
+        willQuitApp = true;
+        app.quit();
+      }
+    }
+  ]);
+  tray.setToolTip("PP");
+  tray.setContextMenu(contextMenu);
+  tray.on("click", () => {
+    if (win == null ? void 0 : win.isVisible()) {
+      win == null ? void 0 : win.hide();
+      win == null ? void 0 : win.setSkipTaskbar(true);
+    } else {
+      win == null ? void 0 : win.show();
+      win == null ? void 0 : win.setSkipTaskbar(false);
+    }
+  });
+}
 app.whenReady().then(() => {
-  migrate().then(createWindow);
+  migrate().then(() => {
+    createWindow();
+    createTray();
+  });
 });
 export {
   MAIN_DIST,

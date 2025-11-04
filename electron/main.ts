@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu } from "electron";
+import { app, BrowserWindow, ipcMain, Menu, nativeImage, Tray } from "electron";
 // import { createRequire } from 'node:module'
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -31,7 +31,8 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   ? path.join(process.env.APP_ROOT, "public")
   : RENDERER_DIST;
 
-let win: BrowserWindow | null;
+let win: BrowserWindow | null, tray: Tray | null;
+let willQuitApp = false;
 
 function createWindow() {
   Menu.setApplicationMenu(null);
@@ -106,9 +107,16 @@ function createWindow() {
   });
   ipcMain.handle("openDevTools", (event) => {
     win?.webContents.openDevTools();
-  })
-}
+  });
 
+  win.on("close", (event) => {
+    if (!willQuitApp) {
+      event.preventDefault();
+      win?.hide();
+      win?.setSkipTaskbar(true);
+    }
+  });
+}
 
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -140,6 +148,59 @@ app.on("activate", () => {
   }
 });
 
+function createTray() {
+  const iconPath = path.join(__dirname, "../public", "icon/w_32x32.ico"); // 请替换为你的图标路径
+  const trayIcon = nativeImage.createFromPath(iconPath);
+  tray = new Tray(trayIcon);
+
+  // 定义托盘的上下文菜单（右键菜单） [citation:1][citation:5]
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: "显示/隐藏",
+      click: () => {
+        console.log('isVisible:', win?.isVisible());
+        if (win?.isVisible()) {
+          win?.hide();
+          win?.setSkipTaskbar(true);
+        } else {
+          win?.show();
+          win?.setSkipTaskbar(false);
+        }
+      },
+    },
+    { type: "separator" }, // 分割线
+    {
+      label: "退出",
+      click: () => {
+        // 设置标志位，表示现在要真正退出了 [citation:7]
+        willQuitApp = true;
+        // 退出应用 [citation:1][citation:5]
+        app.quit();
+      },
+    },
+  ]);
+
+  // 设置托盘图标的悬停提示 [citation:1][citation:2]
+  tray.setToolTip("PP");
+  // 应用右键菜单
+  tray.setContextMenu(contextMenu);
+
+  // 点击托盘图标的事件（通常用于显示/隐藏窗口） [citation:2][citation:5]
+  tray.on("click", () => {
+    // 这里实现点击托盘图标的逻辑，例如显示/隐藏窗口
+    if (win?.isVisible()) {
+      win?.hide();
+      win?.setSkipTaskbar(true);
+    } else {
+      win?.show();
+      win?.setSkipTaskbar(false);
+    }
+  });
+}
+
 app.whenReady().then(() => {
-  migrate().then(createWindow);
+  migrate().then(() => {
+    createWindow();
+    createTray();
+  });
 });
