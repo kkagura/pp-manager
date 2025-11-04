@@ -3,7 +3,7 @@ var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { en
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 var _a;
 const __filename = fileURLToPath(import.meta.url);
-import require$$0$5, { app, BrowserWindow, ipcMain } from "electron";
+import require$$0$5, { app, BrowserWindow, Menu, ipcMain } from "electron";
 import { fileURLToPath } from "node:url";
 import path$6 from "node:path";
 import require$$2 from "path";
@@ -2031,7 +2031,6 @@ log.transports.file.format = "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
 const require$2 = createRequire(import.meta.url);
 const sqlite3 = require$2("sqlite3");
 const dbPath = path$6.join(app.getPath("userData"), "pp.db");
-console.log(dbPath);
 const db = new sqlite3.Database(dbPath);
 function query(sql, params) {
   return new Promise((resolve, reject) => {
@@ -2286,6 +2285,7 @@ const RENDERER_DIST = path$6.join(process.env.APP_ROOT, "dist");
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path$6.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
 let win;
 function createWindow() {
+  Menu.setApplicationMenu(null);
   win = new BrowserWindow({
     icon: path$6.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
@@ -2344,6 +2344,9 @@ function createWindow() {
   });
   ipcMain.handle("getFileInfo", async (event, filePath) => {
     return getFileInfo(filePath);
+  });
+  ipcMain.handle("openDevTools", (event) => {
+    win == null ? void 0 : win.webContents.openDevTools();
   });
 }
 app.on("window-all-closed", () => {

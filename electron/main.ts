@@ -34,7 +34,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 let win: BrowserWindow | null;
 
 function createWindow() {
-  // Menu.setApplicationMenu(null);
+  Menu.setApplicationMenu(null);
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
@@ -104,6 +104,9 @@ function createWindow() {
   ipcMain.handle("getFileInfo", async (event, filePath: string) => {
     return getFileInfo(filePath);
   });
+  ipcMain.handle("openDevTools", (event) => {
+    win?.webContents.openDevTools();
+  })
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common

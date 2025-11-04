@@ -40,6 +40,9 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   },
   getPath(name) {
     return electron.ipcRenderer.invoke("getPath", name);
+  },
+  openDevTools() {
+    return electron.ipcRenderer.invoke("openDevTools");
   }
   // You can expose other APTs you need here.
   // ...

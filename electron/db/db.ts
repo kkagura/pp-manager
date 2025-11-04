@@ -6,5 +6,4 @@ const require = createRequire(import.meta.url);
 
 const sqlite3 = require("sqlite3");
 const dbPath = path.join(app.getPath("userData"), "pp.db");
-console.log(dbPath);
 export const db: Database = new sqlite3.Database(dbPath);

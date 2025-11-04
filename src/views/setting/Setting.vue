@@ -53,6 +53,17 @@
           </div>
         </div>
       </div>
+      <div class="form-section">
+        <div class="form-section-title">系统设置</div>
+        <div class="form-section-content">
+          <div class="form-item">
+            <div class="form-item-label">调试工具</div>
+            <div class="form-item-content">
+              <el-button type="primary" @click="openDevTools">打开调试工具</el-button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -74,6 +85,10 @@ const themeOptions = ref([
 ]);
 
 const setting = useSettingStore();
+
+const openDevTools = () => {
+  (window.ipcRenderer as any).openDevTools();
+};
 </script>
 <style scoped lang="less">
 .setting-form {
@@ -102,6 +117,7 @@ const setting = useSettingStore();
         padding: 12px 0;
         display: flex;
         justify-content: space-between;
+        align-items: center;
         .form-item-content {
           .el-select {
             width: 200px;
