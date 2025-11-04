@@ -2288,7 +2288,7 @@ let willQuitApp = false;
 function createWindow() {
   Menu.setApplicationMenu(null);
   win = new BrowserWindow({
-    icon: path$6.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    icon: path$6.join(process.env.VITE_PUBLIC, "icon/p_ico_32x32.ico"),
     webPreferences: {
       preload: path$6.join(__dirname$1, "preload.mjs")
     }
@@ -2380,7 +2380,7 @@ app.on("activate", () => {
   }
 });
 function createTray() {
-  const iconPath = path$6.join(__dirname$1, "../public", "icon/w_32x32.ico");
+  const iconPath = path$6.join(__dirname$1, "../public", "icon/p_ico_32x32.ico");
   const trayIcon = nativeImage.createFromPath(iconPath);
   tray = new Tray(trayIcon);
   const contextMenu = Menu.buildFromTemplate([
