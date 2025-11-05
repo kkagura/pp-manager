@@ -83,7 +83,9 @@ const handleEdit = (id: number) => {
 };
 
 const handleDelete = (id: number) => {
-  projectService.delete(id);
+  projectService.delete(id).then(() => {
+    tableContext.search();
+  });
 };
 
 tableContext.search();
