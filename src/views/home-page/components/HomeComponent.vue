@@ -28,10 +28,10 @@
             </el-icon>
           </div>
         </div>
-        <MdEditor
+        <RichEditor
           v-model="project.description"
           @input="handleEditorInput"
-        ></MdEditor>
+        ></RichEditor>
       </PageContent>
     </PageContainer>
     <HomeSourceModal
@@ -51,8 +51,9 @@ import { Plus } from "@element-plus/icons-vue";
 import { computed, reactive, ref, watch, type PropType } from "vue";
 import HomeSourceModal from "./HomeSourceModal.vue";
 import { ElMessage } from "element-plus";
-import MdEditor from "@/components/md-editor/MdEditor.vue";
+// import MdEditor from "@/components/md-editor/MdEditor.vue";
 import { debounce } from "@/utils/debounce";
+import RichEditor from "@/components/rich-editor/RichEditor.vue";
 
 const sourceService = getService(SourceServiceKey);
 const projectService = getService(ProjectServiceKey);

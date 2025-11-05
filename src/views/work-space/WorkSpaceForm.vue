@@ -37,7 +37,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="工作区信息">
-              <MdEditor v-model="model.description" ref="mdEditorRef" />
+              <RichEditor v-model="model.description" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -54,11 +54,11 @@ import MdEditor from "@/components/md-editor/MdEditor.vue";
 import { ElMessage, type FormInstance } from "element-plus";
 import { getService } from "@/modules";
 import { ProjectServiceKey } from "@/modules";
+import RichEditor from "@/components/rich-editor/RichEditor.vue";
 
 const projectService = getService(ProjectServiceKey);
 const router = useRouter();
 const route = useRoute();
-const mdEditorRef = ref<InstanceType<typeof MdEditor>>();
 const model = ref<ProjectCreateDto>({
   name: "",
   shortName: "",

@@ -24,7 +24,7 @@ const themes = [
       "--main-section-bg-color": "#1B1B1B",
       "--main-section-bg-color-secondary": "#262626",
       "--main-section-bg-color-third": "#333333",
-      "--main-section-border-color": "#E4E4E4",
+      "--main-section-border-color": "#2C2C2C",
       "--text-color": "#E0E0E0",
       "--text-color-secondary": "#7F7F7F",
     },
