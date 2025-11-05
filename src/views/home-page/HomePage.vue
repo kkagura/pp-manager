@@ -30,13 +30,26 @@ const projectService = getService(ProjectServiceKey);
 
 const projects = ref<ProjectEntity[]>([]);
 const activeProject = ref<ProjectEntity>();
+const storageKey = "lastProjectId";
 const handleProjectClick = (project: ProjectEntity) => {
   activeProject.value = project;
+  localStorage.setItem(storageKey, JSON.stringify(project.id));
 };
 
 const onInit = () => {
   projectService.list({}).then((res) => {
     projects.value = res;
+    let lastProjectId: any = localStorage.getItem(storageKey);
+    if (lastProjectId) {
+      lastProjectId = JSON.parse(lastProjectId);
+      const project = projects.value.find(
+        (project) => project.id === lastProjectId
+      );
+      if (project) {
+        handleProjectClick(project);
+        return;
+      }
+    }
     if (res.length > 0) {
       handleProjectClick(res[0]);
     }
