@@ -86,7 +86,6 @@ const stylePadding = computed(() => `${props.padding}px`);
   overflow: hidden;
   padding: v-bind(stylePadding);
   box-sizing: border-box;
-  transition: background-color 0.2s;
   &.is-vertical {
     flex-direction: column;
   }
