@@ -6,6 +6,15 @@
       :mode="mode"
       class="rich-editor-toolbar"
     />
+    <div class="rich-editor-header" v-if="showHeader">
+      <input
+        :value="title"
+        @input="handleTitleInput"
+        class="rich-editor-header-input"
+        type="text"
+        placeholder="请输入标题"
+      />
+    </div>
     <Editor
       :modelValue="valueHtml"
       :defaultConfig="editorConfig"
@@ -33,19 +42,25 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  title: {
+    type: String,
+    default: "",
+  },
+  showHeader: {
+    type: Boolean,
+    default: false,
+  },
 });
 const emit = defineEmits<{
   (e: "update:modelValue", value: string): void;
+  (e: "update:title", value: string): void;
   (e: "change", value: string): void;
   (e: "input", value: string): void;
   (e: "focus", editor: any): void;
   (e: "blur", editor: any): void;
 }>();
 
-const toolbarConfig = {};
-const editorConfig = { placeholder: "请输入内容..." }; // 内容 HTML
 const valueHtml = ref(props.modelValue);
-
 watch(
   () => props.modelValue,
   (newVal) => {
@@ -55,6 +70,19 @@ watch(
     }
   }
 );
+
+const title = ref(props.title);
+watch(
+  () => props.title,
+  (newVal) => {
+    if (newVal !== title.value) {
+      title.value = newVal;
+    }
+  }
+);
+
+const toolbarConfig = {};
+const editorConfig = { placeholder: "请输入内容..." }; // 内容 HTML
 
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
@@ -79,12 +107,31 @@ const handleFocus = (editor: any) => {
 const handleBlur = (editor: any) => {
   emit("blur", editor);
 };
+const handleTitleInput = (e: any) => {
+  const value = e.target.value;
+  if (value !== title.value) {
+    title.value = value;
+    emit("update:title", value);
+  }
+};
 </script>
 <style scoped lang="less">
 .rich-editor-container {
   border: 1px solid var(--main-section-border-color);
   .rich-editor-toolbar {
     border-bottom: 1px solid var(--main-section-border-color);
+  }
+  .rich-editor-header {
+    padding: 10px;
+    .rich-editor-header-input {
+      height: 44px;
+      width: 100%;
+      border: none;
+      outline: none !important;
+      font-size: 24px;
+      font-weight: 700;
+      background-color: var(--main-section-bg-color);
+    }
   }
   .rich-editor-content {
     min-height: 500px;

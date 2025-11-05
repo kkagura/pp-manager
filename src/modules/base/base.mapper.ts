@@ -43,6 +43,9 @@ export abstract class BaseMapper<T extends BaseEntity> {
     insert = Object.keys(entity).reduce((prev, curr) => {
       return prev.set(curr, entity[curr as keyof T]);
     }, insert);
+    const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
+    insert.set("createdAt", now);
+    insert.set("updatedAt", now);
     const sql = insert.toString();
     return this.db.dbExecute(sql);
   }

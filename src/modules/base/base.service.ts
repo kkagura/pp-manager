@@ -41,6 +41,7 @@ export abstract class BaseService<T extends BaseEntity> {
     const builder = this.mapper.builder();
     const offset = (params.page - 1) * params.pageSize;
     builder.limit(params.pageSize).offset(offset);
+    builder.order("createdAt", false);
     return builder;
   }
 
