@@ -16,7 +16,7 @@ export const siderRoutes = [
     path: "/note/list",
     component: () => import("../views/note/NoteList.vue"),
     meta: {
-      title: "小计",
+      title: "小记",
       icon: "icon-yunyingxiaoji",
       menu: true,
     },

@@ -6,4 +6,5 @@ export class NoteCreateDto {
   title: string;
   html: string;
   text: string;
+  isPinned: number;
 }

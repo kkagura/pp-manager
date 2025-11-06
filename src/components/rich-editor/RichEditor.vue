@@ -74,6 +74,7 @@ const emit = defineEmits<{
   (e: "input", value: string): void;
   (e: "focus", editor: any): void;
   (e: "blur", editor: any): void;
+  (e: "title-change", value: string): void;
 }>();
 
 const textareaHeight = ref("auto");
@@ -164,6 +165,7 @@ const handleTitleInput = (e: any) => {
   if (value !== title.value) {
     title.value = value;
     emit("update:title", value);
+    emit("title-change", value);
   }
 };
 </script>

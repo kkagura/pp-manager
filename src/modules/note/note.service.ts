@@ -20,6 +20,7 @@ export class NoteService extends BaseService<NoteEntity> {
     if (searchDto.title) {
       builder.where("title like ?", `%${searchDto.title}%`);
     }
+    builder.order("isPinned", false);
     builder.order("createdAt", false);
     return this.mapper.list(builder);
   }
@@ -33,6 +34,10 @@ export class NoteService extends BaseService<NoteEntity> {
     if (params.title) {
       builder.where("title like ?", `%${params.title}%`);
     }
+    // 先按置顶排序，再按创建时间排序
+    // 需要先清除 pageBuilder 中的 createdAt 排序，然后重新添加
+    builder.order("isPinned", false);
+    builder.order("createdAt", false);
     const total = await this.mapper.total(builder);
     const records = await this.mapper.list(builder);
     return {
