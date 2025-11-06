@@ -159,7 +159,7 @@ app.on("activate", () => {
 });
 
 function createTray() {
-  const iconPath = path.join(__dirname, "../public", "icon/p_ico_32x32.ico"); // 请替换为你的图标路径
+  const iconPath = path.join(process.env.VITE_PUBLIC, "icon/p_ico_32x32.ico"); // 请替换为你的图标路径
   const trayIcon = nativeImage.createFromPath(iconPath);
   tray = new Tray(trayIcon);
 

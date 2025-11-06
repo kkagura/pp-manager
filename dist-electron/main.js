@@ -1,57 +1,57 @@
 var ye = Object.defineProperty;
 var Ee = (n, e, t) => e in n ? ye(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
 var u = (n, e, t) => Ee(n, typeof e != "symbol" ? e + "" : e, t);
-import ve, { app as y, BrowserWindow as Q, globalShortcut as K, Menu as Z, ipcMain as v, nativeImage as be, Tray as Te } from "electron";
-import { fileURLToPath as ee } from "node:url";
+import ve, { app as y, BrowserWindow as Y, globalShortcut as Q, Menu as K, ipcMain as v, nativeImage as be, Tray as Te } from "electron";
+import { fileURLToPath as Z } from "node:url";
 import g from "node:path";
 import O from "path";
 import Se from "child_process";
-import _ from "os";
+import F from "os";
 import $ from "fs";
 import Ae from "util";
-import te from "events";
+import ee from "events";
 import Le from "http";
 import Oe from "https";
-import { createRequire as re } from "module";
+import { createRequire as te } from "module";
 import { exec as we } from "node:child_process";
 import { stat as Ne } from "node:fs/promises";
 import $e from "node:fs";
-const Xr = ee(import.meta.url);
+const Xr = Z(import.meta.url);
 function Pe(n) {
   return n && n.__esModule && Object.prototype.hasOwnProperty.call(n, "default") ? n.default : n;
 }
-const ne = $, N = O;
+const re = $, N = O;
 var De = {
   findAndReadPackageJson: Ie,
   tryReadJsonAt: L
 };
 function Ie() {
-  return L(Re()) || L(_e()) || L(process.resourcesPath, "app.asar") || L(process.resourcesPath, "app") || L(process.cwd()) || { name: void 0, version: void 0 };
+  return L(Re()) || L(Fe()) || L(process.resourcesPath, "app.asar") || L(process.resourcesPath, "app") || L(process.cwd()) || { name: void 0, version: void 0 };
 }
 function L(...n) {
   if (n[0])
     try {
-      const e = N.join(...n), t = Fe("package.json", e);
+      const e = N.join(...n), t = _e("package.json", e);
       if (!t)
         return;
-      const r = JSON.parse(ne.readFileSync(t, "utf8")), s = (r == null ? void 0 : r.productName) || (r == null ? void 0 : r.name);
+      const r = JSON.parse(re.readFileSync(t, "utf8")), s = (r == null ? void 0 : r.productName) || (r == null ? void 0 : r.name);
       return !s || s.toLowerCase() === "electron" ? void 0 : s ? { name: s, version: r == null ? void 0 : r.version } : void 0;
     } catch {
       return;
     }
 }
-function Fe(n, e) {
+function _e(n, e) {
   let t = e;
   for (; ; ) {
     const r = N.parse(t), s = r.root, o = r.dir;
-    if (ne.existsSync(N.join(t, n)))
+    if (re.existsSync(N.join(t, n)))
       return N.resolve(N.join(t, n));
     if (t === s)
       return null;
     t = o;
   }
 }
-function _e() {
+function Fe() {
   const n = process.argv.filter((t) => t.indexOf("--user-data-dir=") === 0);
   return n.length === 0 || typeof n[0] != "string" ? null : n[0].replace("--user-data-dir=", "");
 }
@@ -63,7 +63,7 @@ function Re() {
     return;
   }
 }
-const xe = Se, S = _, A = O, Me = De;
+const xe = Se, S = F, A = O, Me = De;
 let Ce = class {
   constructor() {
     u(this, "appName");
@@ -362,7 +362,7 @@ let ze = class extends ke {
     (s = this.electron.dialog) == null || s.showErrorBox(t, r);
   }
 };
-var We = ze, se = { exports: {} };
+var We = ze, ne = { exports: {} };
 (function(n) {
   let e = {};
   try {
@@ -406,10 +406,10 @@ var We = ze, se = { exports: {} };
       }
     typeof window == "object" ? window.__electronLog = o : __electronLog = o;
   }
-})(se);
-var qe = se.exports;
-const z = $, Ve = _, W = O, Be = qe;
-let q = !1, V = !1;
+})(ne);
+var qe = ne.exports;
+const k = $, Ve = F, z = O, Be = qe;
+let W = !1, q = !1;
 var Je = {
   initialize({
     externalApi: n,
@@ -442,20 +442,20 @@ function Xe({
   preloadOption: s
 }) {
   let o = typeof s == "string" ? s : void 0;
-  if (q) {
+  if (W) {
     r.warn(new Error("log.initialize({ preload }) already called").stack);
     return;
   }
-  q = !0;
+  W = !0;
   try {
-    o = W.resolve(
+    o = z.resolve(
       __dirname,
       "../renderer/electron-log-preload.js"
     );
   } catch {
   }
-  if (!o || !z.existsSync(o)) {
-    o = W.join(
+  if (!o || !k.existsSync(o)) {
+    o = z.join(
       n.getAppUserDataPath() || Ve.tmpdir(),
       "electron-log-preload.js"
     );
@@ -466,7 +466,7 @@ function Xe({
         console.error(e);
       }
     `;
-    z.writeFileSync(o, i, "utf8");
+    k.writeFileSync(o, i, "utf8");
   }
   n.setPreloadFileForSessions({
     filePath: o,
@@ -475,13 +475,13 @@ function Xe({
   });
 }
 function He({ externalApi: n, logger: e }) {
-  if (V) {
+  if (q) {
     e.warn(
       new Error("log.initialize({ spyRendererConsole }) already called").stack
     );
     return;
   }
-  V = !0;
+  q = !0;
   const t = ["debug", "info", "warn", "error"];
   n.onEveryWebContentsEvent(
     "console-message",
@@ -887,7 +887,7 @@ function ct({
   return s.reduce((o, i) => typeof i == "function" ? i({ data: o, logger: n, message: e, transport: t }) : o, r);
 }
 const { transform: lt } = P;
-var oe = {
+var se = {
   concatFirstStringElements: pt,
   format({ message: n, logger: e, transport: t, data: r = n == null ? void 0 : n.data }) {
     switch (typeof t.format) {
@@ -972,7 +972,7 @@ function dt({ data: n }) {
   let s = [];
   return r[0] !== "" && s.push(r[0]), s = s.concat(n.slice(1)), r[1] !== "" && s.push(r[1]), s;
 }
-var ie = { exports: {} };
+var oe = { exports: {} };
 (function(n) {
   const e = Ae;
   n.exports = {
@@ -1032,16 +1032,16 @@ var ie = { exports: {} };
     const a = (i == null ? void 0 : i.serializeMapAndSet) !== !1;
     return o instanceof Error ? o.stack : o && (typeof o == "function" ? `[function] ${o.toString()}` : o instanceof Date ? o.toISOString() : a && o instanceof Map && Object.fromEntries ? Object.fromEntries(o) : a && o instanceof Set && Array.from ? Array.from(o) : o);
   }
-})(ie);
-var R = ie.exports, j = {
+})(oe);
+var R = oe.exports, j = {
   applyAnsiStyles({ data: n }) {
-    return B(n, gt, mt);
+    return V(n, gt, mt);
   },
   removeStyles({ data: n }) {
-    return B(n, () => "");
+    return V(n, () => "");
   }
 };
-const ae = {
+const ie = {
   unset: "\x1B[0m",
   black: "\x1B[30m",
   red: "\x1B[31m",
@@ -1055,12 +1055,12 @@ const ae = {
 };
 function gt(n) {
   const e = n.replace(/color:\s*(\w+).*/, "$1").toLowerCase();
-  return ae[e] || "";
+  return ie[e] || "";
 }
 function mt(n) {
-  return n + ae.unset;
+  return n + ie.unset;
 }
-function B(n, e, t) {
+function V(n, e, t) {
   const r = {};
   return n.reduce((s, o, i, a) => {
     if (r[i])
@@ -1080,10 +1080,10 @@ function B(n, e, t) {
 const {
   concatFirstStringElements: yt,
   format: Et
-} = oe, { maxDepth: vt, toJSON: bt } = R, {
+} = se, { maxDepth: vt, toJSON: bt } = R, {
   applyAnsiStyles: Tt,
   removeStyles: St
-} = j, { transform: At } = P, J = {
+} = j, { transform: At } = P, B = {
   error: console.error,
   warn: console.warn,
   info: console.info,
@@ -1092,12 +1092,12 @@ const {
   silly: console.debug,
   log: console.log
 };
-var Lt = le;
-const Ot = process.platform === "win32" ? ">" : "›", ce = `%c{h}:{i}:{s}.{ms}{scope}%c ${Ot} {text}`;
-Object.assign(le, {
-  DEFAULT_FORMAT: ce
+var Lt = ce;
+const Ot = process.platform === "win32" ? ">" : "›", ae = `%c{h}:{i}:{s}.{ms}{scope}%c ${Ot} {text}`;
+Object.assign(ce, {
+  DEFAULT_FORMAT: ae
 });
-function le(n) {
+function ce(n) {
   return Object.assign(e, {
     colorMap: {
       error: "red",
@@ -1108,7 +1108,7 @@ function le(n) {
       silly: "gray",
       default: "unset"
     },
-    format: ce,
+    format: ae,
     level: "silly",
     transforms: [
       wt,
@@ -1120,7 +1120,7 @@ function le(n) {
     ],
     useStyles: process.env.FORCE_STYLES,
     writeFn({ message: t }) {
-      (J[t.level] || J.info)(...t.data);
+      (B[t.level] || B.info)(...t.data);
     }
   });
   function e(t) {
@@ -1150,7 +1150,7 @@ function $t(n) {
 function Pt(n, e) {
   return e.colorMap[n] || e.colorMap.default;
 }
-const Dt = te, b = $, X = _;
+const Dt = ee, b = $, J = F;
 let It = class extends Dt {
   constructor({
     path: t,
@@ -1182,8 +1182,8 @@ let It = class extends Dt {
   }
   crop(t) {
     try {
-      const r = Ft(this.path, t || 4096);
-      this.clear(), this.writeLine(`[log cropped]${X.EOL}${r}`);
+      const r = _t(this.path, t || 4096);
+      this.clear(), this.writeLine(`[log cropped]${J.EOL}${r}`);
     } catch (r) {
       this.emit(
         "error",
@@ -1228,7 +1228,7 @@ let It = class extends Dt {
     return this.path;
   }
   writeLine(t) {
-    if (t += X.EOL, this.writeAsync) {
+    if (t += J.EOL, this.writeAsync) {
       this.asyncWriteQueue.push(t), this.nextAsyncWrite();
       return;
     }
@@ -1243,13 +1243,13 @@ let It = class extends Dt {
     }
   }
 };
-var pe = It;
-function Ft(n, e) {
+var le = It;
+function _t(n, e) {
   const t = Buffer.alloc(e), r = b.statSync(n), s = Math.min(r.size, e), o = Math.max(0, r.size - e), i = b.openSync(n, "r"), a = b.readSync(i, t, 0, s, o);
   return b.closeSync(i), t.toString("utf8", 0, a);
 }
-const _t = pe;
-let Rt = class extends _t {
+const Ft = le;
+let Rt = class extends Ft {
   clear() {
   }
   crop() {
@@ -1264,7 +1264,7 @@ let Rt = class extends _t {
   }
 };
 var xt = Rt;
-const Mt = te, H = $, G = O, Ct = pe, jt = xt;
+const Mt = ee, X = $, H = O, Ct = le, jt = xt;
 let Ut = class extends Mt {
   constructor() {
     super();
@@ -1281,7 +1281,7 @@ let Ut = class extends Mt {
   provide({ filePath: t, writeOptions: r = {}, writeAsync: s = !1 }) {
     let o;
     try {
-      if (t = G.resolve(t), this.store[t])
+      if (t = H.resolve(t), this.store[t])
         return this.store[t];
       o = this.createFile({ filePath: t, writeOptions: r, writeAsync: s });
     } catch (i) {
@@ -1313,14 +1313,14 @@ let Ut = class extends Mt {
    * @private
    */
   testFileWriting({ filePath: t, writeOptions: r }) {
-    H.mkdirSync(G.dirname(t), { recursive: !0 }), H.writeFileSync(t, "", { flag: "a", mode: r.mode });
+    X.mkdirSync(H.dirname(t), { recursive: !0 }), X.writeFileSync(t, "", { flag: "a", mode: r.mode });
   }
 };
 var kt = Ut;
-const I = $, zt = _, w = O, Wt = kt, { transform: qt } = P, { removeStyles: Vt } = j, {
+const I = $, zt = F, w = O, Wt = kt, { transform: qt } = P, { removeStyles: Vt } = j, {
   format: Bt,
   concatFirstStringElements: Jt
-} = oe, { toString: Xt } = R;
+} = se, { toString: Xt } = R;
 var Ht = Yt;
 const Gt = new Wt();
 function Yt(n, { registry: e = Gt, externalApi: t } = {}) {
@@ -1494,11 +1494,11 @@ function pr(n) {
     }));
   }
 }
-const Y = rt, ur = ot, fr = at, hr = Lt, dr = Ht, gr = tr, mr = lr;
+const G = rt, ur = ot, fr = at, hr = Lt, dr = Ht, gr = tr, mr = lr;
 var yr = Er;
 function Er({ dependencies: n, initializeFn: e }) {
   var r;
-  const t = new Y({
+  const t = new G({
     dependencies: n,
     errorHandler: new ur(),
     eventLogger: new fr(),
@@ -1515,7 +1515,7 @@ function Er({ dependencies: n, initializeFn: e }) {
       processType: "main"
     }
   });
-  return t.default = t, t.Logger = Y, t.processInternalErrorFn = (s) => {
+  return t.default = t, t.Logger = G, t.processInternalErrorFn = (s) => {
     t.transports.console.writeFn({
       message: {
         data: ["Unhandled electron-log error", s],
@@ -1532,7 +1532,7 @@ var Ar = x;
 U.onIpc("__ELECTRON_LOG__", (n, e) => {
   e.scope && x.Logger.getInstance(e).scope(e.scope);
   const t = new Date(e.date);
-  ue({
+  pe({
     ...e,
     date: t.getTime() ? t : /* @__PURE__ */ new Date()
   });
@@ -1545,10 +1545,10 @@ U.onIpcInvoke("__ELECTRON_LOG__", (n, { cmd: e = "", logId: t }) => {
         logId: t
       };
     default:
-      return ue({ data: [`Unknown cmd '${e}'`], level: "error" }), {};
+      return pe({ data: [`Unknown cmd '${e}'`], level: "error" }), {};
   }
 });
-function ue(n) {
+function pe(n) {
   var e;
   (e = x.Logger.getInstance(n)) == null || e.processMessage(n);
 }
@@ -1558,7 +1558,7 @@ const h = /* @__PURE__ */ Pe(Or);
 h.initialize();
 h.transports.console.format = "{h}:{i}:{s} {text}";
 h.transports.file.format = "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
-const wr = re(import.meta.url), Nr = wr("sqlite3"), $r = g.join(y.getPath("userData"), "pp.db"), m = new Nr.Database($r);
+const wr = te(import.meta.url), Nr = wr("sqlite3"), $r = g.join(y.getPath("userData"), "pp.db"), m = new Nr.Database($r);
 function Pr(n, e) {
   return new Promise((t, r) => {
     h.info(`[db] query: ${n}`), m.all(n, e || [], (s, o) => {
@@ -1573,7 +1573,7 @@ function Dr(n, e) {
     });
   });
 }
-function fe(n, e) {
+function ue(n, e) {
   return new Promise((t, r) => {
     h.info(`[db] execute: ${n}`), m.run(n, e || [], function(s) {
       s ? (h.error(`[db] execute error: ${s.message}`), r(s)) : t({
@@ -1621,7 +1621,7 @@ function D() {
   });
 }
 function M(n) {
-  return fe("UPDATE app_version SET version = ?", [n]);
+  return ue("UPDATE app_version SET version = ?", [n]);
 }
 function Ir() {
   return new Promise((n, e) => {
@@ -1639,10 +1639,10 @@ function Ir() {
     });
   });
 }
-async function Fr() {
+async function _r() {
   await D() >= 1 || (await Ir(), await M(1));
 }
-function _r() {
+function Fr() {
   return new Promise((n, e) => {
     m.prepare(`
     CREATE TABLE IF NOT EXISTS shortcuts (
@@ -1660,7 +1660,7 @@ function _r() {
   });
 }
 async function Rr() {
-  await D() >= 2 || (await _r(), await M(2));
+  await D() >= 2 || (await Fr(), await M(2));
 }
 function xr() {
   return new Promise((n, e) => {
@@ -1704,9 +1704,9 @@ async function jr() {
 }
 async function Ur() {
   const n = await D();
-  h.info(`[db] migrate version: ${n}`), await Fr(), await Rr(), await Mr(), await jr();
+  h.info(`[db] migrate version: ${n}`), await _r(), await Rr(), await Mr(), await jr();
 }
-const kr = re(import.meta.url), zr = kr("windows-shortcuts");
+const kr = te(import.meta.url), zr = kr("windows-shortcuts");
 async function Wr(n) {
   try {
     return (await Ne(n)).isDirectory();
@@ -1749,20 +1749,20 @@ async function qr(n) {
     });
   });
 }
-const k = g.dirname(ee(import.meta.url));
-process.env.APP_ROOT = g.join(k, "..");
+const fe = g.dirname(Z(import.meta.url));
+process.env.APP_ROOT = g.join(fe, "..");
 const C = process.env.VITE_DEV_SERVER_URL, En = g.join(process.env.APP_ROOT, "dist-electron"), he = g.join(process.env.APP_ROOT, "dist");
 process.env.VITE_PUBLIC = C ? g.join(process.env.APP_ROOT, "public") : he;
-let c, F, de = !1;
+let c, _, de = !1;
 function ge() {
-  Z.setApplicationMenu(null), c = new Q({
+  K.setApplicationMenu(null), c = new Y({
     icon: g.join(process.env.VITE_PUBLIC, "icon/p_ico_32x32.ico"),
     webPreferences: {
-      preload: g.join(k, "preload.mjs")
+      preload: g.join(fe, "preload.mjs")
     }
   }), c.webContents.on("did-finish-load", () => {
     c == null || c.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
-  }), C ? c.loadURL(C) : c.loadFile(g.join(he, "index.html")), v.handle("dbQuery", async (n, e, t) => Pr(e, t)), v.handle("dbQueryOne", async (n, e, t) => Dr(e, t)), v.handle("dbExecute", async (n, e, t) => fe(e, t)), v.handle(
+  }), C ? c.loadURL(C) : c.loadFile(g.join(he, "index.html")), v.handle("dbQuery", async (n, e, t) => Pr(e, t)), v.handle("dbQueryOne", async (n, e, t) => Dr(e, t)), v.handle("dbExecute", async (n, e, t) => ue(e, t)), v.handle(
     "openSource",
     async (n, e) => {
       const { exe: t, args: r } = e;
@@ -1777,7 +1777,7 @@ function ge() {
   ), v.handle("getAppPath", async (n) => y.getAppPath()), v.handle("getPath", async (n, e) => y.getPath(e)), v.handle("getFileInfo", async (n, e) => qr(e)), v.handle("openDevTools", (n) => {
     c == null || c.webContents.openDevTools();
   }), c.on("close", (n) => {
-    de ? K.unregisterAll() : (n.preventDefault(), c == null || c.hide(), c == null || c.setSkipTaskbar(!0));
+    de ? Q.unregisterAll() : (n.preventDefault(), c == null || c.hide(), c == null || c.setSkipTaskbar(!0));
   });
 }
 const Vr = y.requestSingleInstanceLock();
@@ -1788,12 +1788,12 @@ y.on("window-all-closed", () => {
   process.platform !== "darwin" && (y.quit(), c = null);
 });
 y.on("activate", () => {
-  Q.getAllWindows().length === 0 && ge();
+  Y.getAllWindows().length === 0 && ge();
 });
 function Br() {
-  const n = g.join(k, "../public", "icon/p_ico_32x32.ico"), e = be.createFromPath(n);
-  F = new Te(e);
-  const t = Z.buildFromTemplate([
+  const n = g.join(process.env.VITE_PUBLIC, "icon/p_ico_32x32.ico"), e = be.createFromPath(n);
+  _ = new Te(e);
+  const t = K.buildFromTemplate([
     {
       label: "显示/隐藏",
       click: () => {
@@ -1809,12 +1809,12 @@ function Br() {
       }
     }
   ]);
-  F.setToolTip("PP"), F.setContextMenu(t), F.on("click", () => {
+  _.setToolTip("PP"), _.setContextMenu(t), _.on("click", () => {
     c != null && c.isVisible() ? (c == null || c.hide(), c == null || c.setSkipTaskbar(!0)) : (c == null || c.show(), c == null || c.setSkipTaskbar(!1));
   });
 }
 y.whenReady().then(() => {
-  K.register("CommandOrControl+Q", () => {
+  Q.register("CommandOrControl+Q", () => {
     c != null && c.isVisible() || (c == null || c.show(), c == null || c.setSkipTaskbar(!1));
   }), Ur().then(() => {
     ge(), Br();
