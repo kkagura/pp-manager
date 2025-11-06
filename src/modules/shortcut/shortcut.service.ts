@@ -24,7 +24,7 @@ export class ShortcutService extends BaseService<ShortcutEntity> {
     return this.mapper.list(builder);
   }
 
-  add(entity: ShortcutCreateDto): Promise<unknown> {
+  add(entity: ShortcutCreateDto) {
     return this.mapper.add(entity);
   }
 

@@ -56,7 +56,7 @@ export class SourceService extends BaseService<SourceEntity> {
     return records;
   }
 
-  add(entity: SourceCreateDto): Promise<unknown> {
+  add(entity: SourceCreateDto) {
     return this.mapper.add({
       ...entity,
       shortcutId: entity.shortcutId ? Number(entity.shortcutId) : undefined,

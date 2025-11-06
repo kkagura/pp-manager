@@ -23,7 +23,7 @@ export class ProjectService extends BaseService<ProjectEntity> {
     return this.mapper.list(builder);
   }
 
-  add(entity: ProjectCreateDto): Promise<unknown> {
+  add(entity: ProjectCreateDto) {
     return this.mapper.add(entity);
   }
 

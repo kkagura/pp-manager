@@ -12,6 +12,16 @@ export const siderRoutes = [
     },
   },
   {
+    name: "NoteList",
+    path: "/note/list",
+    component: () => import("../views/note/NoteList.vue"),
+    meta: {
+      title: "小计",
+      icon: "icon-yunyingxiaoji",
+      menu: true,
+    },
+  },
+  {
     name: "WorkSpaceList",
     path: "/work-space/list",
     component: () => import("../views/work-space/WorkSpaceList.vue"),

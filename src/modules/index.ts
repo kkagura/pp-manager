@@ -10,6 +10,10 @@ import { SourceServiceKey } from "./source/key";
 import { SourceMapper } from "./source/source.mapper";
 import { SourceMapperKey } from "./source/key";
 import { ShortcutService } from "./shortcut/shortcut.service";
+import { NoteMapper } from "./note/note.mapper";
+import { NoteMapperKey } from "./note/key";
+import { NoteService } from "./note/note.service";
+import { NoteServiceKey } from "./note/key";
 
 const container = new Container();
 
@@ -22,8 +26,15 @@ container.bind(ShortcutServiceKey, ShortcutService);
 container.bind(SourceMapperKey, SourceMapper);
 container.bind(SourceServiceKey, SourceService);
 
+container.bind(NoteMapperKey, NoteMapper);
+container.bind(NoteServiceKey, NoteService);
 export const getService = <T>(key: InjectionKey<T>): T => {
   return container.get(key);
 };
 
-export { ProjectServiceKey, ShortcutServiceKey, SourceServiceKey };
+export {
+  ProjectServiceKey,
+  ShortcutServiceKey,
+  SourceServiceKey,
+  NoteServiceKey,
+};

@@ -28,7 +28,7 @@ export abstract class BaseService<T extends BaseEntity> {
   }
 
   @logMethod()
-  add(entity: T): Promise<unknown> {
+  add(entity: Omit<T, "id" | "createdAt" | "updatedAt">): Promise<{ id: number }> {
     return this.mapper.add(entity);
   }
 

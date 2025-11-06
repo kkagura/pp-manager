@@ -63,14 +63,14 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
 
-  ipcMain.handle("dbQuery", async (event, sql) => {
-    return query(sql);
+  ipcMain.handle("dbQuery", async (event, sql, params) => {
+    return query(sql, params);
   });
-  ipcMain.handle("dbQueryOne", async (event, sql) => {
-    return queryOne(sql);
+  ipcMain.handle("dbQueryOne", async (event, sql, params) => {
+    return queryOne(sql, params);
   });
-  ipcMain.handle("dbExecute", async (event, sql) => {
-    return execute(sql);
+  ipcMain.handle("dbExecute", async (event, sql, params) => {
+    return execute(sql, params);
   });
   ipcMain.handle(
     "openSource",

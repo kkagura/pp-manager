@@ -21,14 +21,14 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     return ipcRenderer.invoke(channel, ...omit);
   },
 
-  dbQuery(sql: string) {
-    return ipcRenderer.invoke("dbQuery", sql);
+  dbQuery(sql: string, params?: any[]) {
+    return ipcRenderer.invoke("dbQuery", sql, params);
   },
-  dbQueryOne(sql: string) {
-    return ipcRenderer.invoke("dbQueryOne", sql);
+  dbQueryOne(sql: string, params?: any[]) {
+    return ipcRenderer.invoke("dbQueryOne", sql, params);
   },
-  dbExecute(sql: string) {
-    return ipcRenderer.invoke("dbExecute", sql);
+  dbExecute(sql: string, params?: any[]) {
+    return ipcRenderer.invoke("dbExecute", sql, params);
   },
 
   openSource(event: { exe: string; args: string }) {

@@ -1,30 +1,32 @@
 <template>
-  <div class="rich-editor-container">
+  <div ref="containerRef" class="rich-editor-container" :class="{ 'is-border': border }">
     <Toolbar
       :editor="editorRef"
       :defaultConfig="toolbarConfig"
       :mode="mode"
       class="rich-editor-toolbar"
     />
-    <div class="rich-editor-header" v-if="showHeader">
-      <input
-        :value="title"
-        @input="handleTitleInput"
-        class="rich-editor-header-input"
-        type="text"
-        placeholder="请输入标题"
+    <div class="rich-editor-content">
+      <div class="rich-editor-header" v-if="showHeader">
+        <input
+          :value="title"
+          @input="handleTitleInput"
+          class="rich-editor-header-input"
+          type="text"
+          placeholder="请输入标题"
+        />
+      </div>
+      <Editor
+        class="rich-editor-textarea"
+        :modelValue="valueHtml"
+        :defaultConfig="editorConfig"
+        :mode="mode"
+        @onCreated="handleCreated"
+        @onChange="handleChange"
+        @onFocus="handleFocus"
+        @onBlur="handleBlur"
       />
     </div>
-    <Editor
-      :modelValue="valueHtml"
-      :defaultConfig="editorConfig"
-      :mode="mode"
-      class="rich-editor-content"
-      @onCreated="handleCreated"
-      @onChange="handleChange"
-      @onFocus="handleFocus"
-      @onBlur="handleBlur"
-    />
   </div>
 </template>
 
@@ -33,7 +35,9 @@ import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 
 import { onBeforeUnmount, ref, shallowRef, onMounted, watch } from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+import { useResizeObserver } from "@/hooks/use-resize-observer";
 const editorRef = shallowRef();
+const containerRef = ref<HTMLElement>();
 
 const mode = ref("default");
 
@@ -50,6 +54,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  fitHeight: {
+    type: Boolean,
+    default: false,
+  },
+  border: {
+    type: Boolean,
+    default: true,
+  }
 });
 const emit = defineEmits<{
   (e: "update:modelValue", value: string): void;
@@ -59,6 +71,34 @@ const emit = defineEmits<{
   (e: "focus", editor: any): void;
   (e: "blur", editor: any): void;
 }>();
+
+const textareaHeight = ref("auto");
+useResizeObserver(containerRef, () => {
+  if (props.fitHeight) {
+    caculateTextareaHeight();
+  }
+});
+const caculateTextareaHeight = () => {
+  if (!containerRef.value) return;
+  const containerHeight = containerRef.value.clientHeight;
+  const toolbarHeight =
+    containerRef.value.querySelector(".rich-editor-toolbar")?.clientHeight ?? 0;
+  const headerHeight =
+    containerRef.value.querySelector(".rich-editor-header")?.clientHeight ?? 0;
+  const contentHeight = containerHeight - toolbarHeight - 2 - headerHeight;
+  textareaHeight.value = `${contentHeight}px`;
+};
+
+watch(
+  () => props.fitHeight,
+  () => {
+    if (props.fitHeight) {
+      caculateTextareaHeight();
+    } else {
+      textareaHeight.value = "auto";
+    }
+  }
+);
 
 const valueHtml = ref(props.modelValue);
 watch(
@@ -90,15 +130,16 @@ onBeforeUnmount(() => {
 });
 
 const handleCreated = (editor: any) => {
-  editorRef.value = editor; //
+  editorRef.value = editor;
+  // const textDiv = 
 };
 const handleChange = (editor: any) => {
   const html = editor.getHtml();
   if (html !== valueHtml.value) {
     valueHtml.value = html;
     emit("update:modelValue", html);
-    emit("input", html);
-    emit("change", html);
+    emit("input", editor);
+    emit("change", editor);
   }
 };
 const handleFocus = (editor: any) => {
@@ -117,9 +158,17 @@ const handleTitleInput = (e: any) => {
 </script>
 <style scoped lang="less">
 .rich-editor-container {
-  border: 1px solid var(--main-section-border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  &.is-border {
+    border: 1px solid var(--main-section-border-color);
+  }
   .rich-editor-toolbar {
+    box-sizing: border-box;
     border-bottom: 1px solid var(--main-section-border-color);
+    width: 100%;
   }
   .rich-editor-header {
     padding: 10px;
@@ -134,8 +183,10 @@ const handleTitleInput = (e: any) => {
     }
   }
   .rich-editor-content {
-    min-height: 500px;
-    overflow-y: hidden;
+    .rich-editor-textarea {
+      height: v-bind(textareaHeight) !important;
+      overflow: hidden;
+    }
   }
 }
 </style>
