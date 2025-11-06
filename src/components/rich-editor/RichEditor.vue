@@ -1,5 +1,9 @@
 <template>
-  <div ref="containerRef" class="rich-editor-container" :class="{ 'is-border': border }">
+  <div
+    ref="containerRef"
+    class="rich-editor-container"
+    :class="{ 'is-border': border }"
+  >
     <Toolbar
       :editor="editorRef"
       :defaultConfig="toolbarConfig"
@@ -61,7 +65,7 @@ const props = defineProps({
   border: {
     type: Boolean,
     default: true,
-  }
+  },
 });
 const emit = defineEmits<{
   (e: "update:modelValue", value: string): void;
@@ -131,7 +135,14 @@ onBeforeUnmount(() => {
 
 const handleCreated = (editor: any) => {
   editorRef.value = editor;
-  // const textDiv = 
+  if (containerRef.value) {
+    let textDivs = containerRef.value.querySelectorAll(
+      "[contenteditable='true']"
+    );
+    textDivs.forEach((textDiv: Element) => {
+      textDiv.setAttribute("spellcheck", "false");
+    });
+  }
 };
 const handleChange = (editor: any) => {
   const html = editor.getHtml();
@@ -186,6 +197,7 @@ const handleTitleInput = (e: any) => {
     .rich-editor-textarea {
       height: v-bind(textareaHeight) !important;
       overflow: hidden;
+      font-size: 16px;
     }
   }
 }

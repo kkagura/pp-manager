@@ -23,7 +23,7 @@ export abstract class BaseMapper<T extends BaseEntity> {
     return this.db.dbQueryOne<T>(sql, params);
   }
 
-  list(s?: Select): Promise<any> {
+  list(s?: Select): Promise<any[]> {
     if (!s) {
       s = squel.select().from(this.tableName).order("createdAt", false);
     }

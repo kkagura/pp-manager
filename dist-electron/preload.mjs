@@ -1,1 +1,49 @@
-"use strict";const r=require("electron");r.contextBridge.exposeInMainWorld("ipcRenderer",{on(...e){const[n,o]=e;return r.ipcRenderer.on(n,(t,...i)=>o(t,...i))},off(...e){const[n,...o]=e;return r.ipcRenderer.off(n,...o)},send(...e){const[n,...o]=e;return r.ipcRenderer.send(n,...o)},invoke(...e){const[n,...o]=e;return r.ipcRenderer.invoke(n,...o)},dbQuery(e,n){return r.ipcRenderer.invoke("dbQuery",e,n)},dbQueryOne(e,n){return r.ipcRenderer.invoke("dbQueryOne",e,n)},dbExecute(e,n){return r.ipcRenderer.invoke("dbExecute",e,n)},openSource(e){return r.ipcRenderer.invoke("openSource",e)},getFileInfo(e){return r.ipcRenderer.invoke("getFileInfo",e)},getAppPath(){return r.ipcRenderer.invoke("getAppPath")},getPath(e){return r.ipcRenderer.invoke("getPath",e)},openDevTools(){return r.ipcRenderer.invoke("openDevTools")}});
+"use strict";
+const electron = require("electron");
+electron.contextBridge.exposeInMainWorld("ipcRenderer", {
+  on(...args) {
+    const [channel, listener] = args;
+    return electron.ipcRenderer.on(
+      channel,
+      (event, ...args2) => listener(event, ...args2)
+    );
+  },
+  off(...args) {
+    const [channel, ...omit] = args;
+    return electron.ipcRenderer.off(channel, ...omit);
+  },
+  send(...args) {
+    const [channel, ...omit] = args;
+    return electron.ipcRenderer.send(channel, ...omit);
+  },
+  invoke(...args) {
+    const [channel, ...omit] = args;
+    return electron.ipcRenderer.invoke(channel, ...omit);
+  },
+  dbQuery(sql, params) {
+    return electron.ipcRenderer.invoke("dbQuery", sql, params);
+  },
+  dbQueryOne(sql, params) {
+    return electron.ipcRenderer.invoke("dbQueryOne", sql, params);
+  },
+  dbExecute(sql, params) {
+    return electron.ipcRenderer.invoke("dbExecute", sql, params);
+  },
+  openSource(event) {
+    return electron.ipcRenderer.invoke("openSource", event);
+  },
+  getFileInfo(path) {
+    return electron.ipcRenderer.invoke("getFileInfo", path);
+  },
+  getAppPath() {
+    return electron.ipcRenderer.invoke("getAppPath");
+  },
+  getPath(name) {
+    return electron.ipcRenderer.invoke("getPath", name);
+  },
+  openDevTools() {
+    return electron.ipcRenderer.invoke("openDevTools");
+  }
+  // You can expose other APTs you need here.
+  // ...
+});

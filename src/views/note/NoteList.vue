@@ -21,7 +21,7 @@
         </div>
       </div>
     </PageSider>
-    <PageContent :scroll="false" v-if="activeNote" :key="activeNote.id">
+    <PageContent class="note-content" :scroll="false" v-if="activeNote" :key="activeNote.id">
       <RichEditor
         show-header
         v-model:title="activeNote.title"
@@ -144,5 +144,8 @@ onMounted(async () => {
       white-space: normal;
     }
   }
+}
+.note-content {
+  padding-bottom: 8px;
 }
 </style>

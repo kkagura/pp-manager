@@ -1,37 +1,42 @@
 <template>
-  <PageContent>
+  <PageContent :scroll="false">
     <PageContainer>
       <PageHeader :title="title"></PageHeader>
-      <PageContent>
-        <div class="source-list">
-          <div
-            class="source-item"
-            v-for="source in sourceList"
-            :key="source.id"
-            @click="handleLaunchSource(source)"
-          >
-            <img
-              class="source-icon"
-              :src="source.shortcut.icon"
-              alt="source-icon"
-            />
-            <div class="source-name">{{ source.name }}</div>
-            <div class="source-description">{{ source.description }}</div>
+      <PageContent :scroll="false">
+        <div class="content-wrapper">
+          <div class="source-list">
+            <div
+              class="source-item"
+              v-for="source in sourceList"
+              :key="source.id"
+              @click="handleLaunchSource(source)"
+            >
+              <img
+                class="source-icon"
+                :src="source.shortcut.icon"
+                alt="source-icon"
+              />
+              <div class="source-name">{{ source.name }}</div>
+              <div class="source-description">{{ source.description }}</div>
+            </div>
+            <div
+              @drop="handleDrop"
+              @click="handleAddSource"
+              class="source-item add-source-item"
+            >
+              <el-icon>
+                <Plus />
+              </el-icon>
+            </div>
           </div>
-          <div
-            @drop="handleDrop"
-            @click="handleAddSource"
-            class="source-item add-source-item"
-          >
-            <el-icon>
-              <Plus />
-            </el-icon>
+          <div class="project-description">
+            <RichEditor
+              fitHeight
+              v-model="project.description"
+              @input="handleEditorInput"
+            ></RichEditor>
           </div>
         </div>
-        <RichEditor
-          v-model="project.description"
-          @input="handleEditorInput"
-        ></RichEditor>
       </PageContent>
     </PageContainer>
     <HomeSourceModal
@@ -191,6 +196,15 @@ const handleAddSource = () => {
       align-items: center;
       justify-content: center;
     }
+  }
+}
+.content-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  .project-description {
+    flex: 1;
+    overflow: hidden;
   }
 }
 </style>
