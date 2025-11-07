@@ -134,7 +134,12 @@ if (!gotTheLock) {
 } else {
   app.on("second-instance", (event, path) => {
     if (win) {
-      if (win.isMinimized()) win.restore();
+      if (win.isMinimized()) {
+        win.restore();
+      } else if (!win.isVisible()) {
+        win.show();
+        win.setSkipTaskbar(false);
+      }
       win.focus();
     }
   });
