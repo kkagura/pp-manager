@@ -6,6 +6,7 @@ import {
   nativeImage,
   Tray,
   globalShortcut,
+  HandlerDetails,
 } from "electron";
 // import { createRequire } from 'node:module'
 import { fileURLToPath } from "node:url";
@@ -51,6 +52,24 @@ function createWindow() {
     },
   });
 
+  win.webContents.setWindowOpenHandler((details: HandlerDetails) => {
+    // 获取链接
+    let url = details.url as string;
+    // 使用默认浏览器打开链接，而不是在webview中打开新窗口
+    const cmd = `start ${url}`;
+    exec(cmd, (error, stdout, stderr) => {
+      if (error) {
+        log.error(`openSource error: ${error}`);
+      } else if (stderr) {
+        log.error(`openSource stderr: ${stderr}`);
+      } else {
+        log.info(`openSource stdout: ${stdout}`);
+      }
+    });
+    // 拒绝默认行为
+    return { action: "deny" };
+  });
+
   // Test active push message to Renderer-process.
   win.webContents.on("did-finish-load", () => {
     win?.webContents.send("main-process-message", new Date().toLocaleString());
@@ -87,6 +106,7 @@ function createWindow() {
           cmd = `"${exe}" "${args}"`;
         }
         exec(cmd, (error, stdout, stderr) => {
+          minimize();
           if (error) {
             reject(error);
             log.error(`openSource error: ${error}`);
@@ -120,8 +140,7 @@ function createWindow() {
   win.on("close", (event) => {
     if (!willQuitApp) {
       event.preventDefault();
-      win?.hide();
-      win?.setSkipTaskbar(true);
+      minimize();
     } else {
       globalShortcut.unregisterAll();
     }
@@ -137,8 +156,7 @@ if (!gotTheLock) {
       if (win.isMinimized()) {
         win.restore();
       } else if (!win.isVisible()) {
-        win.show();
-        win.setSkipTaskbar(false);
+        maximize();
       }
       win.focus();
     }
@@ -163,6 +181,16 @@ app.on("activate", () => {
   }
 });
 
+function minimize() {
+  win?.hide();
+  win?.setSkipTaskbar(true);
+}
+
+function maximize() {
+  win?.show();
+  win?.setSkipTaskbar(false);
+}
+
 function createTray() {
   const iconPath = path.join(process.env.VITE_PUBLIC, "icon/p_ico_32x32.ico"); // 请替换为你的图标路径
   const trayIcon = nativeImage.createFromPath(iconPath);
@@ -174,11 +202,9 @@ function createTray() {
       label: "显示/隐藏",
       click: () => {
         if (win?.isVisible()) {
-          win?.hide();
-          win?.setSkipTaskbar(true);
+          minimize();
         } else {
-          win?.show();
-          win?.setSkipTaskbar(false);
+          maximize();
         }
       },
     },
@@ -203,11 +229,9 @@ function createTray() {
   tray.on("click", () => {
     // 这里实现点击托盘图标的逻辑，例如显示/隐藏窗口
     if (win?.isVisible()) {
-      win?.hide();
-      win?.setSkipTaskbar(true);
+      minimize();
     } else {
-      win?.show();
-      win?.setSkipTaskbar(false);
+      maximize();
     }
   });
 }
@@ -215,8 +239,7 @@ function createTray() {
 app.whenReady().then(() => {
   globalShortcut.register("CommandOrControl+Q", () => {
     if (!win?.isVisible()) {
-      win?.show();
-      win?.setSkipTaskbar(false);
+      maximize();
     }
   });
   migrate().then(() => {
