@@ -17,6 +17,11 @@ import { log } from "./log";
 import { stat } from "node:fs/promises";
 import { getFileInfo } from "./utils/file";
 
+// 开机自启动
+app.setLoginItemSettings({
+  openAtLogin: true,
+});
+
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
