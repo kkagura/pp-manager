@@ -189,6 +189,7 @@ function minimize() {
 function maximize() {
   win?.show();
   win?.setSkipTaskbar(false);
+  win?.focus();
 }
 
 function createTray() {
