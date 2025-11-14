@@ -129,6 +129,7 @@ const model = ref<SourceCreateDto>({
   shortcutId: "",
   projectId: "",
   description: "",
+  sort: 1,
 });
 
 const formRef = ref<FormInstance>();
@@ -172,6 +173,7 @@ const handleClosed = () => {
     shortcutId: "",
     projectId: "",
     description: "",
+    sort: 1,
   };
 };
 
