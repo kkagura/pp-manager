@@ -4,4 +4,5 @@ export class ProjectEntity extends BaseEntity {
   name: string;
   shortName: string;
   description: string;
+  sort: number;
 }

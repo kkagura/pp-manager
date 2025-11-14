@@ -10,12 +10,14 @@
     </el-table>
     <div class="pro-table-pagination">
       <el-pagination
-        :page-size="pagination.pageSize"
-        :current-page="pagination.page"
+        v-model:page-size="pagination.pageSize"
+        v-model:current-page="pagination.page"
         :total="total"
         @current-change="tableContext.handlePageChange"
         @size-change="tableContext.handlePageSizeChange"
         background
+        layout="prev, pager, next, sizes"
+        :page-sizes="[10, 20, 50, 100, 200]"
       ></el-pagination>
     </div>
   </div>
@@ -30,7 +32,7 @@ import { useResizeObserver } from "@/hooks/use-resize-observer";
 import { UseTableContext } from "@/hooks/use-table";
 import { omit } from "@/utils/object";
 import { TableInstance, TableProps } from "element-plus";
-import { computed, ref, toRefs } from "vue";
+import { computed, ref, toRefs, watch } from "vue";
 
 type IProTableProps = Omit<TableProps<T>, "data" | "height"> & {
   tableContext: UseTableContext<P, T>;

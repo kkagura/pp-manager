@@ -15,7 +15,7 @@
         ref="formRef"
       >
         <el-row>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="名称" prop="name">
               <el-input
                 v-model="model.name"
@@ -25,7 +25,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="简称" prop="shortName">
               <el-input
                 v-model="model.shortName"
@@ -33,6 +33,18 @@
                 :maxlength="50"
                 clearable
               ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="排序" prop="sort">
+              <el-input-number
+                v-model="model.sort"
+                placeholder="请输入排序"
+                :min="1"
+                :max="1000"
+                :step="1"
+                :precision="0"
+              ></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -63,6 +75,7 @@ const model = ref<ProjectCreateDto>({
   name: "",
   shortName: "",
   description: "",
+  sort: 1,
 });
 
 const rules = {

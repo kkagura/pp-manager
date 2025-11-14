@@ -8,4 +8,5 @@ export class ShortcutCreateDto {
   path: string;
   icon: string;
   description: string;
+  sort: number;
 }

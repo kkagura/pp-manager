@@ -7,7 +7,7 @@ import {
   SourceListSearchDto,
 } from "./source.dto";
 import { inject, injectable } from "@/di";
-import squel from "squel";
+import squel, { Select } from "squel";
 import { type ShortcutService } from "../shortcut/shortcut.service";
 import { ShortcutEntity } from "../shortcut/shortcut.entity";
 import { SourceMapperKey, SourceServiceKey } from "./key";
@@ -38,6 +38,7 @@ export class SourceService extends BaseService<SourceEntity> {
       `${this.mapper.tableName}.projectId=projects.projectId`
     );
 
+    builder.order("sort", true);
     builder.order("createdAt", false);
     const records = (await this.mapper.list(builder)) as SourceListRecordDto[];
     let shortcutIds = records.map((it) => it.shortcutId);
@@ -63,15 +64,29 @@ export class SourceService extends BaseService<SourceEntity> {
       projectId: entity.projectId ? Number(entity.projectId) : undefined,
     });
   }
+  pageBuilder(params: PageParams<SourceListSearchDto>): Select {
+    const builder = this.builder(params);
+    const offset = (params.page - 1) * params.pageSize;
+    builder.limit(params.pageSize).offset(offset);
+    return builder;
+  }
+
+  builder(params: SourceListSearchDto): Select {
+    const builder = this.mapper.builder();
+    if (params.name) {
+      builder.where("name like ?", `%${params.name}%`);
+    }
+    builder.order("sort", true);
+    builder.order("createdAt", false);
+    return builder;
+  }
 
   async page(
     params: PageParams<SourceListSearchDto>
   ): Promise<Page<SourceListRecordDto>> {
     const builder = this.pageBuilder(params);
-    if (params.name) {
-      builder.where("name like ?", `%${params.name}%`);
-    }
-    const total = await this.mapper.total(builder);
+    const totalBuilder = this.builder(params);
+    const total = await this.mapper.total(totalBuilder);
     const recordBuilder = builder.clone();
     const projectBuilder = squel.select().from("projects");
     recordBuilder.left_join(

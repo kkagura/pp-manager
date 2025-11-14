@@ -61,7 +61,7 @@ export abstract class BaseService<T extends BaseEntity> {
     return this.mapper.delete(id);
   }
 
-  builder() {
+  builder(_?: any): Select {
     return this.mapper.builder();
   }
 }

@@ -36,6 +36,16 @@
             placeholder="请输入图标"
           />
         </el-form-item>
+        <!-- <el-form-item label="排序" prop="sort">
+          <el-input-number
+            v-model="model.sort"
+            placeholder="请输入排序"
+            :min="1"
+            :max="1000"
+            :step="1"
+            :precision="0"
+          ></el-input-number>
+        </el-form-item> -->
       </el-form>
     </div>
     <template #footer>
@@ -87,6 +97,7 @@ const model = ref<ShortcutCreateDto>({
   path: "",
   icon: "",
   description: "",
+  sort: 1,
 });
 
 const formRef = ref<FormInstance>();

@@ -18,4 +18,5 @@ export class SourceCreateDto {
   shortcutId: number | "";
   projectId: number | "";
   description: string;
+  sort: number;
 }

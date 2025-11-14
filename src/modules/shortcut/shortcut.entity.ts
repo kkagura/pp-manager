@@ -5,4 +5,5 @@ export class ShortcutEntity extends BaseEntity {
   path: string;
   icon: string;
   description: string;
+  sort: number;
 }

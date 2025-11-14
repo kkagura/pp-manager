@@ -6,4 +6,5 @@ export class ProjectCreateDto {
   name: string;
   shortName: string;
   description: string;
+  sort: number;
 }

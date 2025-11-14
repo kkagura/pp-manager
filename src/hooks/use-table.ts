@@ -27,7 +27,7 @@ export const useTable = <P extends Record<string, any>, R>(
     searchParams: options.searchParams,
     pagination: {
       page: 1,
-      pageSize: 10,
+      pageSize: 20,
     },
     records: [],
     total: 0,
@@ -64,12 +64,12 @@ export const useTable = <P extends Record<string, any>, R>(
 
   function handlePageChange(page: number) {
     context.pagination.page = page;
-    search();
+    search(false);
   }
 
   function handlePageSizeChange(pageSize: number) {
     context.pagination.pageSize = pageSize;
-    search();
+    search(false);
   }
 
   return context;

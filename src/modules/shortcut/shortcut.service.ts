@@ -6,6 +6,7 @@ import { ShortcutCreateDto, ShortcutListSearchDto } from "./shortcut.dto";
 import { inject, injectable } from "@/di";
 import { type SourceService } from "../source/source.service";
 import { SourceServiceKey } from "../source/key";
+import { Select } from "squel";
 
 @injectable(ShortcutServiceKey)
 export class ShortcutService extends BaseService<ShortcutEntity> {
@@ -15,12 +16,29 @@ export class ShortcutService extends BaseService<ShortcutEntity> {
   @inject(SourceServiceKey)
   sourceService: SourceService;
 
-  list(searchDto: ShortcutListSearchDto): Promise<ShortcutEntity[]> {
+  builder(params: ShortcutListSearchDto): Select {
     const builder = this.mapper.builder();
-    if (searchDto.name) {
-      builder.where("name like ?", `%${searchDto.name}%`);
+    if (params.name) {
+      builder.where("name like ?", `%${params.name}%`);
+    }
+    if (params.ids?.length) {
+      const placeholders = params.ids.map(() => "?").join(",");
+      builder.where(`id IN (${placeholders})`, ...params.ids);
     }
     builder.order("createdAt", false);
+    return builder;
+  }
+
+  pageBuilder(params: PageParams<ShortcutListSearchDto>): Select {
+    const builder = this.builder(params);
+    const offset = (params.page - 1) * params.pageSize;
+    builder.limit(params.pageSize).offset(offset);
+    return builder;
+  }
+
+  list(searchDto: ShortcutListSearchDto): Promise<ShortcutEntity[]> {
+    console.log('searchDto:', searchDto);
+    const builder = this.builder(searchDto);
     return this.mapper.list(builder);
   }
 
@@ -32,13 +50,8 @@ export class ShortcutService extends BaseService<ShortcutEntity> {
     params: PageParams<ShortcutListSearchDto>
   ): Promise<Page<ShortcutEntity>> {
     const builder = this.pageBuilder(params);
-    if (params.name) {
-      builder.where("name like ?", `%${params.name}%`);
-    }
-    if (params.ids?.length) {
-      builder.where("id in (?)", params.ids);
-    }
-    const total = await this.mapper.total(builder);
+    const totalBuilder = this.builder(params);
+    const total = await this.mapper.total(totalBuilder);
     const records = await this.mapper.list(builder);
     return {
       records,

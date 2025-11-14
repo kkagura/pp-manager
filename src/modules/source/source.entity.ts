@@ -6,4 +6,5 @@ export class SourceEntity extends BaseEntity {
   shortcutId: number;
   projectId: number;
   description: string;
+  sort: number;
 }
