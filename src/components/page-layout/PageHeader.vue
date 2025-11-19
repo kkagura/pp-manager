@@ -1,7 +1,9 @@
 <template>
   <div class="page-header">
     <div class="page-title">
-      {{ title }}
+      <slot>
+        {{ title }}
+      </slot>
     </div>
     <div class="page-actions">
       <slot name="actions"></slot>

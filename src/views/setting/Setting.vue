@@ -67,7 +67,11 @@
           <div class="form-item">
             <div class="form-item-label">唤醒快捷键</div>
             <div class="form-item-content">
-              <el-select @change="changeShortcutKey" v-model="setting.shortcutKey" placeholder="请选择">
+              <el-select
+                @change="changeShortcutKey"
+                v-model="setting.shortcutKey"
+                placeholder="请选择"
+              >
                 <el-option
                   v-for="option in shortcutKeyOptions"
                   :key="option.value"
@@ -75,6 +79,23 @@
                   :value="option.value"
                 ></el-option>
               </el-select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">关于</div>
+        <div class="form-section-content">
+          <div class="form-item">
+            <div class="form-item-label">版本号</div>
+            <div class="form-item-content">
+              <span class="version-number">{{ version }}</span>
+            </div>
+          </div>
+          <div class="form-item clickable" @click="navigateToChangelog">
+            <div class="form-item-label">更新日志</div>
+            <div class="form-item-content">
+              <ElIcon><ArrowRight /></ElIcon>
             </div>
           </div>
         </div>
@@ -87,6 +108,11 @@
 import { ref } from "vue";
 import { useSettingStore } from "@/store/setting";
 import { themeColors } from "@/utils/theme";
+import { ArrowRight } from "@element-plus/icons-vue";
+import { ElIcon } from "element-plus";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const themeOptions = ref([
   {
@@ -116,6 +142,12 @@ const openDevTools = () => {
 const changeShortcutKey = () => {
   // todo ...
 };
+
+const navigateToChangelog = () => {
+  router.push("/changelog");
+};
+
+const version = __VERSION__;
 </script>
 <style scoped lang="less">
 .setting-form {
@@ -145,6 +177,9 @@ const changeShortcutKey = () => {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        &.clickable {
+          cursor: pointer;
+        }
         .form-item-content {
           .el-select {
             width: 200px;

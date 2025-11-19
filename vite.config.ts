@@ -2,11 +2,14 @@ import { defineConfig } from "vite";
 import path from "node:path";
 import electron from "vite-plugin-electron/simple";
 import vue from "@vitejs/plugin-vue";
+import { plugin as mdPlugin, Mode } from "vite-plugin-markdown";
+import pkg from "./package.json";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
+    mdPlugin({ mode: [Mode.VUE] }),
     electron({
       main: {
         // Shortcut of `build.lib.entry`.
@@ -30,6 +33,9 @@ export default defineConfig({
           : {},
     }),
   ],
+  define: {
+    __VERSION__: JSON.stringify(pkg.version),
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -39,7 +45,7 @@ export default defineConfig({
     target: "ES2020",
     rollupOptions: {
       external: ["bindings", "file-uri-to-path"],
-    }
+    },
   },
   esbuild: {
     target: "ES2020",

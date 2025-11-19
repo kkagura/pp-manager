@@ -81,6 +81,16 @@ export const siderRoutes = [
       menu: true,
     },
   },
+  {
+    name: 'Changelog',
+    path: '/changelog',
+    component: () => import("../views/changelog/Changelog.vue"),
+    meta: {
+      title: "更新日志",
+      menu: false,
+      activeMenu: 'Setting',
+    },
+  }
 ];
 
 export const routes = [

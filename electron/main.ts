@@ -100,10 +100,6 @@ function createWindow(showWindow: boolean = true) {
     win?.webContents.send("main-process-message", new Date().toLocaleString());
   });
 
-  win.on("minimize", () => {
-    console.log("isMaximized:", win?.isMaximized());
-  });
-
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
   } else {
