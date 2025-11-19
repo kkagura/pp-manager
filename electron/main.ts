@@ -16,11 +16,15 @@ import { exec } from "node:child_process";
 import { log } from "./log";
 import { stat } from "node:fs/promises";
 import { getFileInfo } from "./utils/file";
+import windowStateKeeper from "electron-window-state";
 
-// 开机自启动
-app.setLoginItemSettings({
-  openAtLogin: true,
-});
+if (app.isPackaged) {
+  // 开机自启动
+  app.setLoginItemSettings({
+    openAtLogin: true,
+    args: ["--hidden"], // 添加隐藏参数，用于标识开机自启动
+  });
+}
 
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -47,15 +51,31 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 
 let win: BrowserWindow | null, tray: Tray | null;
 let willQuitApp = false;
+let mainWindowState: windowStateKeeper.State | null = null;
+const DEFAULT_WINDOW_WIDTH = 1000;
+const DEFAULT_WINDOW_HEIGHT = 800;
 
-function createWindow() {
+// 检查是否是开机自启动（通过命令行参数判断）
+const isStartupLaunch = process.argv.includes("--hidden");
+
+function createWindow(showWindow: boolean = true) {
   Menu.setApplicationMenu(null);
+  mainWindowState = windowStateKeeper({
+    defaultWidth: DEFAULT_WINDOW_WIDTH,
+    defaultHeight: DEFAULT_WINDOW_HEIGHT,
+    maximize: true,
+    fullScreen: true,
+  });
   win = new BrowserWindow({
+    ...mainWindowState,
     icon: path.join(process.env.VITE_PUBLIC, "icon/p_ico_32x32.ico"),
+    show: showWindow, // 控制是否显示窗口
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
     },
   });
+  mainWindowState.manage(win);
+  mainWindowState.saveState(win);
 
   win.webContents.setWindowOpenHandler((details: HandlerDetails) => {
     // 获取链接
@@ -78,6 +98,10 @@ function createWindow() {
   // Test active push message to Renderer-process.
   win.webContents.on("did-finish-load", () => {
     win?.webContents.send("main-process-message", new Date().toLocaleString());
+  });
+
+  win.on("minimize", () => {
+    console.log("isMaximized:", win?.isMaximized());
   });
 
   if (VITE_DEV_SERVER_URL) {
@@ -147,6 +171,7 @@ function createWindow() {
       event.preventDefault();
       minimize();
     } else {
+      mainWindowState?.saveState(win!);
       globalShortcut.unregisterAll();
     }
   });
@@ -194,7 +219,6 @@ function minimize() {
 function maximize() {
   win?.show();
   win?.setSkipTaskbar(false);
-  win?.focus();
 }
 
 function createTray() {
@@ -244,12 +268,15 @@ function createTray() {
 
 app.whenReady().then(() => {
   globalShortcut.register("CommandOrControl+Q", () => {
-    if (!win?.isVisible()) {
+    if (win?.isMinimized()) {
+      win?.restore();
+    } else {
       maximize();
     }
   });
   migrate().then(() => {
-    createWindow();
+    // 如果是开机自启动，不显示窗口；否则正常显示
+    createWindow(!isStartupLaunch);
     createTray();
   });
 });
