@@ -16,8 +16,9 @@
         @current-change="tableContext.handlePageChange"
         @size-change="tableContext.handlePageSizeChange"
         background
-        layout="prev, pager, next, sizes"
+        layout="prev, pager, next, sizes, total"
         :page-sizes="[10, 20, 50, 100, 200]"
+        :total-text="`共 ${total} 条`"
       ></el-pagination>
     </div>
   </div>
