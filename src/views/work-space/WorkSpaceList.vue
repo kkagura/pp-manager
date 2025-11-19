@@ -29,6 +29,11 @@
         ></el-table-column>
         <el-table-column
           min-width="100"
+          prop="sort"
+          label="排序"
+        ></el-table-column>
+        <el-table-column
+          min-width="100"
           prop="createdAt"
           label="创建时间"
         ></el-table-column>
