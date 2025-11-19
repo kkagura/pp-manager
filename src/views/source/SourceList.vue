@@ -1,6 +1,19 @@
 <template>
   <PageContainer @fileDrop="handleFileDrop">
     <SearchBar @search="tableContext.search" @reset="tableContext.reset">
+      <SearchItem label="所属项目">
+        <el-select
+          v-model="searchParams.projectId"
+          placeholder="请选择所属项目"
+        >
+          <el-option
+            v-for="item in projectList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </SearchItem>
       <SearchItem label="资源名称">
         <el-input
           v-model="searchParams.name"
@@ -39,6 +52,7 @@
             <span>{{ scope.row.shortcut?.name }}</span>
           </template>
         </el-table-column>
+        <el-table-column min-width="100" prop="sort" label="排序"></el-table-column>
         <el-table-column
           min-width="100"
           prop="createdAt"
@@ -75,21 +89,24 @@
 </template>
 
 <script lang="ts" setup>
-import { SourceServiceKey } from "@/modules";
+import { ProjectServiceKey, SourceServiceKey } from "@/modules";
 import { Plus } from "@element-plus/icons-vue";
 import { getService } from "@/modules";
 import ProTable from "@/components/pro-table/ProTable.vue";
 import { useTable } from "@/hooks/use-table";
-import { reactive, toRefs } from "vue";
+import { reactive, ref, toRefs } from "vue";
 import SourceModal from "./components/SourceModal.vue";
 import { SourceListRecordDto } from "@/modules/source/source.dto";
+import { ProjectEntity } from "@/modules/project/project.entity";
 
 const sourceService = getService(SourceServiceKey);
+const projectService = getService(ProjectServiceKey);
 
 const tableContext = useTable({
   fetch: sourceService.page.bind(sourceService),
   searchParams: {
     name: "",
+    projectId: "" as "" | number,
   },
 });
 
@@ -133,5 +150,10 @@ const handleFileDrop = (data: { filePath: string; isDirectory: boolean }) => {
 };
 
 tableContext.search();
+
+const projectList = ref<ProjectEntity[]>([]);
+projectService.list({}).then((res) => {
+  projectList.value = res;
+});
 </script>
 <style scoped lang="less"></style>

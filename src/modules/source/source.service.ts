@@ -21,21 +21,18 @@ export class SourceService extends BaseService<SourceEntity> {
   shortcutService: ShortcutService;
 
   async list(searchDto: SourceListSearchDto): Promise<SourceListRecordDto[]> {
-    const builder = this.mapper.builder();
+    const builder = this.builder(searchDto);
     if (searchDto.name) {
       builder.where("name like ?", `%${searchDto.name}%`);
-    }
-    if (searchDto.projectId) {
-      builder.where("projects.projectId = ?", searchDto.projectId);
     }
     if (searchDto.shortcutId) {
       builder.where("shortcutId = ?", searchDto.shortcutId);
     }
     const projectBuilder = squel.select().from("projects");
     builder.left_join(
-      projectBuilder.field("id", "projectId").field("name", "projectName"),
+      projectBuilder.field("id", "pId").field("name", "projectName"),
       "projects",
-      `${this.mapper.tableName}.projectId=projects.projectId`
+      `${this.mapper.tableName}.projectId=projects.pId`
     );
 
     builder.order("sort", true);
@@ -76,6 +73,9 @@ export class SourceService extends BaseService<SourceEntity> {
     if (params.name) {
       builder.where("name like ?", `%${params.name}%`);
     }
+    if (params.projectId) {
+      builder.where("projectId = ?", params.projectId);
+    }
     builder.order("sort", true);
     builder.order("createdAt", false);
     return builder;
@@ -90,9 +90,9 @@ export class SourceService extends BaseService<SourceEntity> {
     const recordBuilder = builder.clone();
     const projectBuilder = squel.select().from("projects");
     recordBuilder.left_join(
-      projectBuilder.field("id", "projectId").field("name", "projectName"),
+      projectBuilder.field("id", "pId").field("name", "projectName"),
       "projects",
-      `${this.mapper.tableName}.projectId=projects.projectId`
+      `${this.mapper.tableName}.projectId=projects.pId`
     );
 
     const records = (await this.mapper.list(

@@ -3,7 +3,7 @@ import { SourceEntity } from "./source.entity";
 
 export class SourceListSearchDto {
   name?: string;
-  projectId?: number;
+  projectId?: number | '';
   shortcutId?: number;
 }
 
