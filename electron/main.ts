@@ -7,6 +7,7 @@ import {
   Tray,
   globalShortcut,
   HandlerDetails,
+  shell,
 } from "electron";
 // import { createRequire } from 'node:module'
 import { fileURLToPath } from "node:url";
@@ -160,6 +161,19 @@ function createWindow(showWindow: boolean = true) {
   });
   ipcMain.handle("openDevTools", (event) => {
     win?.webContents.openDevTools();
+  });
+
+  ipcMain.handle("openSystemLog", async () => {
+    try {
+      const logFilePath = log.transports.file.getFile().path as string;
+      const logDir = path.dirname(logFilePath);
+      await shell.openPath(logDir);
+      log.info(`openSystemLog: ${logDir}`);
+      return logDir;
+    } catch (error) {
+      log.error(`openSystemLog error: ${error}`);
+      throw error;
+    }
   });
 
   win.on("close", (event) => {

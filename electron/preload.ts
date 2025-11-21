@@ -50,6 +50,10 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     return ipcRenderer.invoke("openDevTools");
   },
 
+  openSystemLog() {
+    return ipcRenderer.invoke("openSystemLog");
+  },
+
   // You can expose other APTs you need here.
   // ...
 });

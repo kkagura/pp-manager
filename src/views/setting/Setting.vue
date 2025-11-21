@@ -81,6 +81,12 @@
               </el-select>
             </div>
           </div>
+          <div class="form-item clickable" @click="openSystemLog">
+            <div class="form-item-label">系统日志</div>
+            <div class="form-item-content">
+              <ElIcon><ArrowRight /></ElIcon>
+            </div>
+          </div>
         </div>
       </div>
       <div class="form-section">
@@ -141,6 +147,10 @@ const openDevTools = () => {
 
 const changeShortcutKey = () => {
   // todo ...
+};
+
+const openSystemLog = () => {
+  (window.ipcRenderer as any).openSystemLog();
 };
 
 const navigateToChangelog = () => {
