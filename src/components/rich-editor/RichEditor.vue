@@ -171,6 +171,7 @@ const handleTitleInput = (e: any) => {
 </script>
 <style scoped lang="less">
 .rich-editor-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
   height: 100%;
