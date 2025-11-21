@@ -7,6 +7,7 @@ import { ElMessage } from "element-plus";
 export function logMethod() {
   return function (_: any, context: any) {
     context.addInitializer(function (this: any) {
+      const ctorName = this.constructor.name;
       const target = this[context.name];
       const that = this;
       const handleError = (err: any) => {
@@ -18,13 +19,13 @@ export function logMethod() {
         let p;
         try {
           p = target.call(that, ...args);
-          log.info(`[logMethod] call ${context.name} with args:`, args);
+          log.info(`[logMethod] call ${ctorName} ${context.name} with args:`, args);
         } catch (error) {
           return handleError(error);
         }
         return p
           .then((res: any) => {
-            log.info(`[logMethod] return value of ${context.name}:`, res);
+            log.info(`[logMethod] return value of ${ctorName} ${context.name}:`, res);
             return res;
           })
           .catch(handleError);
