@@ -18,6 +18,7 @@ import { log } from "./log";
 import { stat } from "node:fs/promises";
 import { getFileInfo } from "./utils/file";
 import windowStateKeeper from "electron-window-state";
+import { getScheme, setupProtocol } from "./protocal";
 
 if (app.isPackaged) {
   // 开机自启动
@@ -58,6 +59,53 @@ const DEFAULT_WINDOW_HEIGHT = 800;
 
 // 检查是否是开机自启动（通过命令行参数判断）
 const isStartupLaunch = process.argv.includes("--hidden");
+
+// 通过自定义协议唤起应用时传递的完整 URL
+let deepLinkUrl: string | null = null;
+
+/**
+ * 从命令行参数中提取自定义协议 URL（Windows）
+ */
+function extractDeepLink(argv: string[]): string | null {
+  // 仅在 Windows 下处理 argv，避免其他平台干扰
+  if (process.platform !== "win32") return null;
+
+  const scheme = getScheme();
+  const prefix = `${scheme}://`;
+  const found = argv.find(
+    (arg) => typeof arg === "string" && arg.startsWith(prefix)
+  );
+  return found || null;
+}
+
+/**
+ * 把 URL 解析成结构化对象，方便渲染进程使用
+ */
+function buildDeepLinkPayload(urlStr: string) {
+  try {
+    const urlObj = new URL(urlStr);
+    const params: Record<string, string> = {};
+    urlObj.searchParams.forEach((value, key) => {
+      params[key] = value;
+    });
+
+    return {
+      url: urlStr,
+      protocol: urlObj.protocol.replace(":", ""),
+      host: urlObj.host,
+      pathname: urlObj.pathname,
+      params,
+    };
+  } catch {
+    return {
+      url: urlStr,
+      protocol: "",
+      host: "",
+      pathname: "",
+      params: {} as Record<string, string>,
+    };
+  }
+}
 
 function createWindow(showWindow: boolean = true) {
   Menu.setApplicationMenu(null);
@@ -159,6 +207,11 @@ function createWindow(showWindow: boolean = true) {
   ipcMain.handle("getFileInfo", async (event, filePath: string) => {
     return getFileInfo(filePath);
   });
+
+  // 渲染进程主动获取当前已记录的 deep link（例如首次加载时）
+  ipcMain.handle("getDeepLink", async () => {
+    return deepLinkUrl ? buildDeepLinkPayload(deepLinkUrl) : null;
+  });
   ipcMain.handle("openDevTools", (event) => {
     win?.webContents.openDevTools();
   });
@@ -191,7 +244,16 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
 } else {
-  app.on("second-instance", (event, path) => {
+  app.on("second-instance", (event, argv) => {
+    // 处理通过自定义协议唤起已运行实例的情况
+    const url = extractDeepLink(argv);
+    if (url) {
+      deepLinkUrl = url;
+      if (win) {
+        win.webContents.send("protocol-open", buildDeepLinkPayload(url));
+      }
+    }
+
     if (win) {
       if (win.isMinimized()) {
         win.restore();
@@ -277,6 +339,15 @@ function createTray() {
 }
 
 app.whenReady().then(() => {
+  // 注册自定义协议，确保 pp-manager:// 能够唤起应用
+  setupProtocol();
+
+  // 记录首次启动时通过协议传入的参数（仅 Windows）
+  const initialUrl = extractDeepLink(process.argv);
+  if (initialUrl) {
+    deepLinkUrl = initialUrl;
+  }
+
   globalShortcut.register("CommandOrControl+Q", () => {
     if (win?.isMinimized()) {
       win?.restore();

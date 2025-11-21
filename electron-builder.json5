@@ -29,6 +29,13 @@
     "artifactName": "${productName}-Windows-${version}-Setup.${ext}",
     "icon": "./public/icon/p_ico_256x256.ico"
   },
+  // 自定义协议注册，安装后可以在浏览器中通过 pp-manager:// 唤起应用
+  "protocols": [
+    {
+      "name": "PP Manager Link",
+      "schemes": ["pp-manager"]
+    }
+  ],
   "nsis": {
     "oneClick": false,
     "perMachine": false,

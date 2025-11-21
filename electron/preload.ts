@@ -50,6 +50,11 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     return ipcRenderer.invoke("openDevTools");
   },
 
+  // 获取通过自定义协议唤起应用时传入的参数（结构化对象），可能为 null
+  getDeepLink() {
+    return ipcRenderer.invoke("getDeepLink");
+  },
+
   openSystemLog() {
     return ipcRenderer.invoke("openSystemLog");
   },
