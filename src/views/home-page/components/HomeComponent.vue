@@ -100,7 +100,11 @@ watch(
 const debuoundSave = debounce(() => {
   projectService.update(props.project);
 }, 500);
-const handleEditorInput = () => {
+const handleEditorInput = (editor: any) => {
+  const text = editor.getText();
+  if (!text || text.trim() === '') {
+    return;
+  }
   debuoundSave();
 };
 
