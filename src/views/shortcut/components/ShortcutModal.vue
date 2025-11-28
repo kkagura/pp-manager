@@ -18,6 +18,14 @@
             placeholder="请输入名称"
           />
         </el-form-item>
+        <el-form-item label="别名" prop="alias">
+          <el-input
+            v-model="model.alias"
+            :maxlength="100"
+            clearable
+            placeholder="请输入别名"
+          />
+        </el-form-item>
         <el-form-item label="路径" prop="path">
           <el-input
             v-model="model.path"
@@ -94,6 +102,7 @@ const title = computed(() =>
 
 const model = ref<ShortcutCreateDto>({
   name: "",
+  alias: "",
   path: "",
   icon: "",
   description: "",
@@ -103,6 +112,7 @@ const model = ref<ShortcutCreateDto>({
 const formRef = ref<FormInstance>();
 const rules = ref<FormRules>({
   name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+  alias: [{ required: true, message: "请输入别名", trigger: "blur" }],
   path: [{ required: true, message: "请输入路径", trigger: "blur" }],
   icon: [{ required: true, message: "请输入图标", trigger: "blur" }],
 });

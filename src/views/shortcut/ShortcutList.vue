@@ -24,6 +24,11 @@
         ></el-table-column>
         <el-table-column
           min-width="100"
+          prop="alias"
+          label="别名"
+        ></el-table-column>
+        <el-table-column
+          min-width="100"
           prop="path"
           label="路径"
         ></el-table-column>
