@@ -72,6 +72,16 @@ export const siderRoutes = [
     },
   },
   {
+    name: "StringTools",
+    path: "/string-tools",
+    component: () => import("../views/string-tools/StringTools.vue"),
+    meta: {
+      title: "字符串工具",
+      icon: 'icon-zifuchuantihuan_2',
+      menu: true,
+    },
+  },
+  {
     name: "Setting",
     path: "/setting",
     component: () => import("../views/setting/Setting.vue"),
