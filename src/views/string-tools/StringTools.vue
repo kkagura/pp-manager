@@ -19,10 +19,21 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="转驼峰">
+            <el-form-item label="转小驼峰">
               <el-input :model-value="camelCaseValue" disabled>
                 <template #append>
                   <el-button @click="handleCopy(camelCaseValue)"
+                    >复制</el-button
+                  >
+                </template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="转大驼峰">
+              <el-input :model-value="pascalCaseValue" disabled>
+                <template #append>
+                  <el-button @click="handleCopy(pascalCaseValue)"
                     >复制</el-button
                   >
                 </template>
@@ -134,11 +145,27 @@ const menuPathValue = computed(() => {
 });
 
 const camelCaseValue = computed(() => {
-  // 将中划线字符串转换为驼峰
-  // 先先获取 menuPathValue
+  // 将中划线和空格转换为小驼峰
   const str = inputValue.value;
-  // 使用正则表达式进行转换
-  return str.replace(/-([a-zA-Z])/g, (_, c) => c.toUpperCase());
+  // 先处理中划线和空格，将它们后面的字符转为大写
+  let result = str.replace(/[- ]([a-zA-Z])/g, (_, c) => c.toUpperCase());
+  // 确保首字母是小写
+  if (result.length > 0) {
+    result = result.charAt(0).toLowerCase() + result.slice(1);
+  }
+  return result;
+});
+
+const pascalCaseValue = computed(() => {
+  // 将中划线和空格转换为大驼峰（PascalCase）
+  const str = inputValue.value;
+  // 先处理中划线和空格，将它们后面的字符转为大写
+  let result = str.replace(/[- ]([a-zA-Z])/g, (_, c) => c.toUpperCase());
+  // 确保首字母是大写
+  if (result.length > 0) {
+    result = result.charAt(0).toUpperCase() + result.slice(1);
+  }
+  return result;
 });
 
 const kebabCaseValue = computed(() => {
