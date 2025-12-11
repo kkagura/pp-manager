@@ -11,7 +11,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="菜单路径">
-              <el-input :model-value="menuPathValue" disabled>
+              <el-input :model-value="menuPathValue" readonly>
                 <template #append>
                   <el-button @click="handleCopy(menuPathValue)">复制</el-button>
                 </template>
@@ -19,8 +19,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="css背景图">
+              <el-input :model-value="bgUrlPathValue" readonly>
+                <template #append>
+                  <el-button @click="handleCopy(bgUrlPathValue)">复制</el-button>
+                </template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="转小驼峰">
-              <el-input :model-value="camelCaseValue" disabled>
+              <el-input :model-value="camelCaseValue" readonly>
                 <template #append>
                   <el-button @click="handleCopy(camelCaseValue)"
                     >复制</el-button
@@ -31,7 +40,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="转大驼峰">
-              <el-input :model-value="pascalCaseValue" disabled>
+              <el-input :model-value="pascalCaseValue" readonly>
                 <template #append>
                   <el-button @click="handleCopy(pascalCaseValue)"
                     >复制</el-button
@@ -42,7 +51,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="转中划线">
-              <el-input :model-value="kebabCaseValue" disabled>
+              <el-input :model-value="kebabCaseValue" readonly>
                 <template #append>
                   <el-button @click="handleCopy(kebabCaseValue)"
                     >复制</el-button
@@ -143,6 +152,15 @@ const menuPathValue = computed(() => {
   p = p.replace(/\\/g, "/");
   return p;
 });
+
+const bgUrlPathValue = computed(() => {
+  if (!inputValue.value) return '';
+  // 替换所有反斜杠为斜杠
+  let p = inputValue.value.replace(/\\/g, "/");
+  // 将路径起始的src替换为@符号（用正则处理）
+  p = p.replace(/^src/, '@');
+  return `url('${p}')`;
+})
 
 const camelCaseValue = computed(() => {
   // 将中划线和空格转换为小驼峰
