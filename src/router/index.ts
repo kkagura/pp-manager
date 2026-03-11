@@ -22,6 +22,16 @@ export const siderRoutes = [
     },
   },
   {
+    name: "TodoList",
+    path: "/todo/list",
+    component: () => import("../views/todo/TodoList.vue"),
+    meta: {
+      title: "待办",
+      icon: "icon-daiban",
+      menu: true,
+    },
+  },
+  {
     name: "WorkSpaceList",
     path: "/work-space/list",
     component: () => import("../views/work-space/WorkSpaceList.vue"),

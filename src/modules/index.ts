@@ -14,6 +14,9 @@ import { NoteMapper } from "./note/note.mapper";
 import { NoteMapperKey } from "./note/key";
 import { NoteService } from "./note/note.service";
 import { NoteServiceKey } from "./note/key";
+import { TodoMapper } from "./todo/todo.mapper";
+import { TodoMapperKey, TodoServiceKey } from "./todo/key";
+import { TodoService } from "./todo/todo.service";
 
 const container = new Container();
 
@@ -28,6 +31,9 @@ container.bind(SourceServiceKey, SourceService);
 
 container.bind(NoteMapperKey, NoteMapper);
 container.bind(NoteServiceKey, NoteService);
+
+container.bind(TodoMapperKey, TodoMapper);
+container.bind(TodoServiceKey, TodoService);
 export const getService = <T>(key: InjectionKey<T>): T => {
   return container.get(key);
 };
@@ -37,4 +43,5 @@ export {
   ShortcutServiceKey,
   SourceServiceKey,
   NoteServiceKey,
+  TodoServiceKey,
 };
