@@ -9,6 +9,7 @@
     "build:web": "vue-tsc && vite build",
     "build:electron": "electron-builder",
     "preview": "vite preview",
+    "sync:api-docs": "node ./scripts/sync-api-docs.js",
     "postinstall": "electron-builder install-app-deps",
     "rebuild": "electron-rebuild -f -w sqlite3"
   },
