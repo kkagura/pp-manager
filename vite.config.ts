@@ -29,7 +29,7 @@ export default defineConfig({
       renderer:
         process.env.NODE_ENV === "test"
           ? // https://github.com/electron-vite/vite-plugin-electron-renderer/issues/78#issuecomment-2053600808
-            undefined
+          undefined
           : {},
     }),
   ],
@@ -50,4 +50,14 @@ export default defineConfig({
   esbuild: {
     target: "ES2020",
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3007',
+        rewrite(path) {
+          return path.replace('/api', '')
+        },
+      }
+    }
+  }
 });

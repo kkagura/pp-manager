@@ -1,4 +1,7 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+﻿import { createRouter, createWebHashHistory } from "vue-router";
+import pinia from "@/store";
+import { useAuthStore } from "@/store/auth";
+import { getAccessToken } from "@/request";
 
 export const siderRoutes = [
   {
@@ -9,6 +12,7 @@ export const siderRoutes = [
       title: "首页",
       icon: "icon-shouye",
       menu: true,
+      requiresAuth: true,
     },
   },
   {
@@ -16,9 +20,10 @@ export const siderRoutes = [
     path: "/note/list",
     component: () => import("../views/note/NoteList.vue"),
     meta: {
-      title: "小记",
+      title: "笔记",
       icon: "icon-yunyingxiaoji",
       menu: true,
+      requiresAuth: true,
     },
   },
   {
@@ -29,6 +34,7 @@ export const siderRoutes = [
       title: "待办",
       icon: "icon-daiban",
       menu: true,
+      requiresAuth: true,
     },
   },
   {
@@ -39,6 +45,7 @@ export const siderRoutes = [
       title: "工作区",
       icon: "icon-gongzuoqu",
       menu: true,
+      requiresAuth: true,
     },
   },
   {
@@ -49,6 +56,7 @@ export const siderRoutes = [
       title: "新增工作区",
       menu: false,
       activeMenu: "WorkSpaceList",
+      requiresAuth: true,
     },
   },
   {
@@ -59,6 +67,7 @@ export const siderRoutes = [
       title: "编辑工作区",
       menu: false,
       activeMenu: "WorkSpaceList",
+      requiresAuth: true,
     },
   },
   {
@@ -69,6 +78,7 @@ export const siderRoutes = [
       title: "快捷方式",
       icon: "icon-030-shortcutscriptapp",
       menu: true,
+      requiresAuth: true,
     },
   },
   {
@@ -79,6 +89,7 @@ export const siderRoutes = [
       title: "资源",
       icon: "icon-ziyuan",
       menu: true,
+      requiresAuth: true,
     },
   },
   {
@@ -87,8 +98,9 @@ export const siderRoutes = [
     component: () => import("../views/string-tools/StringTools.vue"),
     meta: {
       title: "字符串工具",
-      icon: 'icon-zifuchuantihuan_2',
+      icon: "icon-zifuchuantihuan_2",
       menu: true,
+      requiresAuth: true,
     },
   },
   {
@@ -99,24 +111,35 @@ export const siderRoutes = [
       title: "设置",
       icon: "icon-shezhi",
       menu: true,
+      requiresAuth: true,
     },
   },
   {
-    name: 'Changelog',
-    path: '/changelog',
+    name: "Changelog",
+    path: "/changelog",
     component: () => import("../views/changelog/Changelog.vue"),
     meta: {
       title: "更新日志",
       menu: false,
-      activeMenu: 'Setting',
+      activeMenu: "Setting",
+      requiresAuth: true,
     },
-  }
+  },
 ];
 
 export const routes = [
   {
     path: "/",
     redirect: "/home",
+  },
+  {
+    name: "Login",
+    path: "/login",
+    component: () => import("../views/login/LoginPage.vue"),
+    meta: {
+      title: "登录",
+      requiresAuth: false,
+    },
   },
   {
     path: "/sider",
@@ -130,11 +153,41 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to) => {
+  const authStore = useAuthStore(pinia);
+
   if (to.meta.title) {
-    document.title = to.meta.title as string;
+    document.title = to.meta.title;
   }
-  next();
+
+  if (to.name === "Login") {
+    if (!getAccessToken()) {
+      return true;
+    }
+
+    const currentUser = await authStore.fetchCurrentUser();
+    return currentUser ? resolveRedirect(to.query.redirect) : true;
+  }
+
+  if (to.meta.requiresAuth) {
+    const currentUser = await authStore.fetchCurrentUser();
+    if (!currentUser) {
+      return {
+        name: "Login",
+        query: {
+          redirect: to.fullPath,
+        },
+      };
+    }
+  }
+
+  return true;
 });
+
+function resolveRedirect(redirect: unknown): string {
+  return typeof redirect === "string" && redirect.startsWith("/")
+    ? redirect
+    : "/home";
+}
 
 export default router;

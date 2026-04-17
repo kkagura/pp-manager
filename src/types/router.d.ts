@@ -1,0 +1,11 @@
+import "vue-router";
+
+declare module "vue-router" {
+  interface RouteMeta {
+    title?: string;
+    icon?: string;
+    menu?: boolean;
+    activeMenu?: string;
+    requiresAuth?: boolean;
+  }
+}

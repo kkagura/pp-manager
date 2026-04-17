@@ -40,10 +40,18 @@ export interface RequestErrorPayload {
 export interface LoginDto {
   username: string;
   password: string;
+  captchaId: string;
+  captchaCode: string;
 }
 
 export interface RefreshTokenDto {
   refreshToken: string;
+}
+
+export interface CaptchaResult {
+  captchaId: string;
+  captchaSvg: string;
+  expiresIn: number;
 }
 
 export interface CreateUserDto {

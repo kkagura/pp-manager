@@ -238,6 +238,8 @@ function createWindow(showWindow: boolean = true) {
       globalShortcut.unregisterAll();
     }
   });
+
+  win?.webContents.openDevTools();
 }
 
 const gotTheLock = app.requestSingleInstanceLock();

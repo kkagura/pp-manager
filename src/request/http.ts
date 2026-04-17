@@ -10,7 +10,6 @@ import { ElMessage } from "element-plus";
 import { clearTokenPair, getAccessToken, getRefreshToken, setTokenPair } from "./token";
 import type { ErrorResponse, LoginResult, RefreshTokenDto, RequestErrorPayload } from "./types";
 
-const DEFAULT_BASE_URL = "http://localhost:3000";
 const AUTH_REFRESH_PATH = "/auth/refresh";
 const AUTH_LOGIN_PATH = "/auth/login";
 const AUTH_LOGOUT_PATH = "/auth/logout";
@@ -47,7 +46,7 @@ export class RequestError extends Error {
 }
 
 function resolveBaseURL(): string {
-  return import.meta.env.VITE_API_BASE_URL?.trim() || DEFAULT_BASE_URL;
+  return import.meta.env.VITE_API_BASE_URL?.trim() || '';
 }
 
 function createHeaders(headers?: unknown): AxiosHeaders {
