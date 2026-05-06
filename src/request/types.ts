@@ -88,7 +88,7 @@ export interface UploadFileParams {
   filename?: string;
   bizType?: string | null;
   bizId?: string | null;
-  isPublic?: 0 | 1 | "0" | "1" | "true" | "false";
+  isPublic?: boolean | 0 | 1 | "0" | "1" | "true" | "false";
 }
 
 export interface PublicUser {

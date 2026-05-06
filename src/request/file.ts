@@ -17,11 +17,23 @@ function appendIfPresent(formData: FormData, key: string, value: unknown): void 
 
 function createUploadFormData(payload: UploadFileParams): FormData {
   const formData = new FormData();
-  formData.append("file", payload.file, payload.filename);
+  if (payload.filename) {
+    formData.append("file", payload.file, payload.filename);
+  } else {
+    formData.append("file", payload.file);
+  }
   appendIfPresent(formData, "bizType", payload.bizType);
   appendIfPresent(formData, "bizId", payload.bizId);
   appendIfPresent(formData, "isPublic", payload.isPublic);
   return formData;
+}
+
+export function uploadFile(payload: UploadFileParams): Promise<PublicStoredFile> {
+  return request<PublicStoredFile, FormData>({
+    method: "POST",
+    url: "/files/upload",
+    data: createUploadFormData(payload),
+  });
 }
 
 export const fileApi = {
@@ -34,14 +46,7 @@ export const fileApi = {
   },
 
   upload(payload: UploadFileParams): Promise<PublicStoredFile> {
-    return request<PublicStoredFile, FormData>({
-      method: "POST",
-      url: "/files/upload",
-      data: createUploadFormData(payload),
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    return uploadFile(payload);
   },
 
   get(id: number): Promise<PublicStoredFile> {
