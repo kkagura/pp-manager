@@ -28,6 +28,10 @@ function createUploadFormData(payload: UploadFileParams): FormData {
   return formData;
 }
 
+function resolveRuntimeOrigin(): string {
+  return window.location.origin;
+}
+
 export function uploadFile(payload: UploadFileParams): Promise<PublicStoredFile> {
   return request<PublicStoredFile, FormData>({
     method: "POST",
@@ -74,6 +78,14 @@ export const fileApi = {
   },
 
   resolveContentUrl(path: string): string {
-    return new URL(path, getBaseURL()).toString();
+    if (/^https?:\/\//i.test(path)) {
+      return path;
+    }
+
+    const baseURL = getBaseURL().trim();
+    const origin = resolveRuntimeOrigin();
+    const normalizedBase = baseURL.endsWith("/") ? baseURL : `${baseURL}/`;
+    const contentPath = path.startsWith("/") ? path.slice(1) : path;
+    return new URL(contentPath, new URL(normalizedBase || "/", origin)).toString();
   },
 };

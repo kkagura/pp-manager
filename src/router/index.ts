@@ -104,6 +104,17 @@ export const siderRoutes = [
     },
   },
   {
+    name: "ImageBed",
+    path: "/image-bed",
+    component: () => import("../views/image-bed/ImageBedPage.vue"),
+    meta: {
+      title: "图床",
+      icon: "icon-ziyuan",
+      menu: true,
+      requiresAuth: true,
+    },
+  },
+  {
     name: "Setting",
     path: "/setting",
     component: () => import("../views/setting/Setting.vue"),
