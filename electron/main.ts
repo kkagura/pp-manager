@@ -19,6 +19,7 @@ import { stat } from "node:fs/promises";
 import { getFileInfo } from "./utils/file";
 import windowStateKeeper from "electron-window-state";
 import { getScheme, setupProtocol } from "./protocal";
+import { registerApiProxyHandlers } from "./api-proxy";
 
 if (app.isPackaged) {
   // 开机自启动
@@ -343,6 +344,7 @@ function createTray() {
 app.whenReady().then(() => {
   // 注册自定义协议，确保 pp-manager:// 能够唤起应用
   setupProtocol();
+  registerApiProxyHandlers();
 
   // 记录首次启动时通过协议传入的参数（仅 Windows）
   const initialUrl = extractDeepLink(process.argv);

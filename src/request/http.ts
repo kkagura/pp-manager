@@ -1,6 +1,7 @@
 import axios, {
   AxiosError,
   AxiosHeaders,
+  type AxiosAdapter,
   type AxiosInstance,
   type AxiosRequestConfig,
   type AxiosResponse,
@@ -45,9 +46,280 @@ export class RequestError extends Error {
   }
 }
 
+interface ElectronFormField {
+  type: "field";
+  name: string;
+  value: string;
+}
+
+interface ElectronFormFile {
+  type: "file";
+  name: string;
+  filename: string;
+  mimeType: string;
+  data: ArrayBuffer;
+}
+
+type ElectronSerializedBody =
+  | { type: "empty" }
+  | { type: "text"; value: string }
+  | { type: "json"; value: unknown }
+  | { type: "arrayBuffer"; value: ArrayBuffer; mimeType?: string }
+  | { type: "formData"; entries: Array<ElectronFormField | ElectronFormFile> };
+
+interface ElectronApiProxyRequest {
+  method?: string;
+  baseURL?: string;
+  url: string;
+  params?: Record<string, unknown>;
+  headers?: Record<string, string>;
+  data?: ElectronSerializedBody;
+  responseType?: string;
+  timeout?: number;
+}
+
+interface ElectronApiProxyResponse {
+  status: number;
+  statusText: string;
+  headers: Record<string, string>;
+  data: unknown;
+}
+
+interface ElectronArrayBufferResponse {
+  type: "arrayBuffer";
+  value: ArrayBuffer;
+}
+
 function resolveBaseURL(): string {
   return import.meta.env.VITE_API_BASE_URL?.trim() || '';
 }
+
+function resolveElectronProxyBaseURL(baseURL?: string): string | undefined {
+  if (!baseURL) {
+    return typeof window !== "undefined" ? window.location.origin : undefined;
+  }
+
+  if (/^https?:\/\//i.test(baseURL)) {
+    return baseURL;
+  }
+
+  if (typeof window !== "undefined" && /^https?:\/\//i.test(window.location.origin)) {
+    return new URL(baseURL, window.location.origin).toString();
+  }
+
+  return baseURL;
+}
+
+function getElectronApiRequest():
+  | ((config: ElectronApiProxyRequest) => Promise<ElectronApiProxyResponse>)
+  | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const apiRequest = (window as any).ipcRenderer?.apiRequest;
+  return typeof apiRequest === "function" ? apiRequest : null;
+}
+
+function normalizeHeaderValue(value: unknown): string | undefined {
+  if (value === undefined || value === null || value === false) {
+    return undefined;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(String).join(", ");
+  }
+
+  return String(value);
+}
+
+function serializeHeaders(headers?: unknown): Record<string, string> {
+  const result: Record<string, string> = {};
+  const normalizedHeaders = AxiosHeaders.from(headers as any).toJSON();
+
+  Object.entries(normalizedHeaders).forEach(([key, value]) => {
+    const normalizedValue = normalizeHeaderValue(value);
+    if (normalizedValue !== undefined) {
+      result[key] = normalizedValue;
+    }
+  });
+
+  return result;
+}
+
+function serializeParams(params: unknown): Record<string, unknown> | undefined {
+  if (!params) {
+    return undefined;
+  }
+
+  if (params instanceof URLSearchParams) {
+    const result: Record<string, string[]> = {};
+    params.forEach((value, key) => {
+      result[key] = [...(result[key] ?? []), value];
+    });
+    return result;
+  }
+
+  if (typeof params === "object") {
+    return params as Record<string, unknown>;
+  }
+
+  return undefined;
+}
+
+function isFormData(value: unknown): value is FormData {
+  return typeof FormData !== "undefined" && value instanceof FormData;
+}
+
+function isBlob(value: unknown): value is Blob {
+  return typeof Blob !== "undefined" && value instanceof Blob;
+}
+
+function resolveBlobFilename(value: Blob): string {
+  return typeof File !== "undefined" && value instanceof File ? value.name : "blob";
+}
+
+async function serializeRequestData(data: unknown): Promise<ElectronSerializedBody> {
+  if (data === undefined || data === null) {
+    return { type: "empty" };
+  }
+
+  if (isFormData(data)) {
+    const entries: Array<ElectronFormField | ElectronFormFile> = [];
+    for (const [name, value] of data.entries()) {
+      if (isBlob(value)) {
+        entries.push({
+          type: "file",
+          name,
+          filename: resolveBlobFilename(value),
+          mimeType: value.type,
+          data: await value.arrayBuffer(),
+        });
+        continue;
+      }
+
+      entries.push({
+        type: "field",
+        name,
+        value: String(value),
+      });
+    }
+
+    return { type: "formData", entries };
+  }
+
+  if (isBlob(data)) {
+    return {
+      type: "arrayBuffer",
+      value: await data.arrayBuffer(),
+      mimeType: data.type,
+    };
+  }
+
+  if (data instanceof ArrayBuffer) {
+    return { type: "arrayBuffer", value: data };
+  }
+
+  if (ArrayBuffer.isView(data)) {
+    const source = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+    const copied = new Uint8Array(source.byteLength);
+    copied.set(source);
+    return { type: "arrayBuffer", value: copied.buffer };
+  }
+
+  if (typeof data === "string") {
+    return { type: "text", value: data };
+  }
+
+  return { type: "json", value: data };
+}
+
+function isArrayBufferProxyResponse(data: unknown): data is ElectronArrayBufferResponse {
+  return Boolean(
+    data &&
+      typeof data === "object" &&
+      (data as ElectronArrayBufferResponse).type === "arrayBuffer" &&
+      (data as ElectronArrayBufferResponse).value instanceof ArrayBuffer,
+  );
+}
+
+function getResponseHeader(headers: Record<string, string>, name: string): string | undefined {
+  const expectedName = name.toLowerCase();
+  const found = Object.entries(headers).find(([key]) => key.toLowerCase() === expectedName);
+  return found?.[1];
+}
+
+function deserializeResponseData(
+  response: ElectronApiProxyResponse,
+  responseType?: string,
+): unknown {
+  if (!isArrayBufferProxyResponse(response.data)) {
+    return response.data;
+  }
+
+  if (responseType === "blob") {
+    return new Blob([response.data.value], {
+      type: getResponseHeader(response.headers, "content-type") ?? "",
+    });
+  }
+
+  return response.data.value;
+}
+
+const electronApiProxyAdapter: AxiosAdapter = async (config) => {
+  const apiRequest = getElectronApiRequest();
+  if (!apiRequest) {
+    throw new AxiosError("Electron API proxy is unavailable", AxiosError.ERR_NOT_SUPPORT, config);
+  }
+
+  try {
+    const proxyResponse = await apiRequest({
+      method: config.method?.toUpperCase() ?? "GET",
+      baseURL: resolveElectronProxyBaseURL(config.baseURL),
+      url: config.url ?? "",
+      params: serializeParams(config.params),
+      headers: serializeHeaders(config.headers),
+      data: await serializeRequestData(config.data),
+      responseType: config.responseType,
+      timeout: config.timeout,
+    });
+
+    const response: AxiosResponse = {
+      data: deserializeResponseData(proxyResponse, config.responseType),
+      status: proxyResponse.status,
+      statusText: proxyResponse.statusText,
+      headers: AxiosHeaders.from(proxyResponse.headers),
+      config,
+      request: null,
+    };
+
+    const validateStatus = config.validateStatus;
+    if (!response.status || !validateStatus || validateStatus(response.status)) {
+      return response;
+    }
+
+    const errorCode = response.status >= 500
+      ? AxiosError.ERR_BAD_RESPONSE
+      : AxiosError.ERR_BAD_REQUEST;
+    throw new AxiosError(
+      `Request failed with status code ${response.status}`,
+      errorCode,
+      config,
+      null,
+      response,
+    );
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
+    }
+
+    throw new AxiosError(
+      error instanceof Error ? error.message : "Electron API proxy request failed",
+      AxiosError.ERR_NETWORK,
+      config,
+    );
+  }
+};
 
 function createHeaders(headers?: unknown): AxiosHeaders {
   return AxiosHeaders.from(headers as any);
@@ -112,6 +384,7 @@ function showRequestError(error: RequestError): void {
 const http: AxiosInstance = axios.create({
   baseURL: resolveBaseURL(),
   timeout: 15000,
+  adapter: getElectronApiRequest() ? electronApiProxyAdapter : undefined,
 });
 
 let refreshPromise: Promise<LoginResult> | null = null;

@@ -59,6 +59,10 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     return ipcRenderer.invoke("openSystemLog");
   },
 
+  apiRequest(config: unknown) {
+    return ipcRenderer.invoke("apiRequest", config);
+  },
+
   // You can expose other APTs you need here.
   // ...
 });
