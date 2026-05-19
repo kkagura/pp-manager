@@ -90,14 +90,14 @@ function handleDrop(event: DragEvent): void {
           <UploadFilled />
         </el-icon>
         <span class="upload-title">{{ uploading ? "上传中" : "点击或拖放图片" }}</span>
-        <span class="upload-subtitle">支持 image/*，单张不超过 {{ maxSizeText }}</span>
+        <span class="upload-subtitle">支持 PNG / JPG / WebP / GIF / SVG，单张不超过 {{ maxSizeText }}</span>
       </button>
 
       <input
         ref="fileInputRef"
         class="file-input"
         type="file"
-        accept="image/*"
+        accept="image/*,.svg"
         @change="handleFileChange"
       />
 

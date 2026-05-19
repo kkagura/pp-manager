@@ -31,7 +31,7 @@ function formatBytes(size: number): string {
 }
 
 function isImageFile(file: File): boolean {
-  return file.type.startsWith("image/");
+  return file.type.startsWith("image/") || /\.svg$/i.test(file.name);
 }
 
 function isImageRecord(file: PublicStoredFile): boolean {
