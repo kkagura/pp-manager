@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CopyDocument, Delete, Link } from "@element-plus/icons-vue";
+import { CopyDocument, Delete, Download, Link } from "@element-plus/icons-vue";
 import type { CopyFormat, ImageBedRecord } from "../useImageBed";
 
 defineProps<{
@@ -21,12 +21,27 @@ const emit = defineEmits<{
   <section class="image-list-section">
     <div class="section-heading">
       <div>
-        <div class="section-title">最近上传</div>
-        <div class="section-meta">{{ total }} 张图片</div>
+        <div class="section-title">全部图片</div>
+        <div class="section-meta">共 {{ total }} 张，按上传时间分页展示</div>
       </div>
     </div>
 
-    <el-skeleton v-if="loading" :rows="6" animated />
+    <div v-if="loading" class="image-grid">
+      <el-skeleton
+        v-for="index in pageSize"
+        :key="index"
+        class="image-card-skeleton"
+        animated
+      >
+        <template #template>
+          <el-skeleton-item class="skeleton-thumb" variant="image" />
+          <div class="skeleton-body">
+            <el-skeleton-item variant="text" />
+            <el-skeleton-item class="skeleton-short" variant="text" />
+          </div>
+        </template>
+      </el-skeleton>
+    </div>
 
     <el-empty
       v-else-if="items.length === 0"
@@ -37,18 +52,20 @@ const emit = defineEmits<{
 
     <div v-else class="image-grid">
       <article v-for="item in items" :key="item.id" class="image-card">
-        <el-image
-          class="image-thumb"
-          :src="item.displayUrl"
-          :preview-src-list="[item.displayUrl]"
-          fit="cover"
-          lazy
-        />
+        <div class="image-preview-wrap">
+          <el-image
+            class="image-thumb"
+            :src="item.displayUrl"
+            :preview-src-list="[item.displayUrl]"
+            fit="cover"
+            lazy
+          />
+        </div>
         <div class="image-body">
           <div class="image-name" :title="item.originalName">
             {{ item.originalName }}
           </div>
-          <div class="image-meta">{{ item.sizeText }}</div>
+          <div class="image-meta">{{ item.mimeType }} · {{ item.sizeText }}</div>
         </div>
         <div class="image-actions">
           <el-tooltip content="复制直链" placement="top">
@@ -65,6 +82,14 @@ const emit = defineEmits<{
               size="small"
               :icon="CopyDocument"
               @click="emit('copy', 'markdown', item.markdownText)"
+            />
+          </el-tooltip>
+          <el-tooltip content="复制 HTML" placement="top">
+            <el-button
+              circle
+              size="small"
+              :icon="Download"
+              @click="emit('copy', 'html', item.htmlText)"
             />
           </el-tooltip>
           <el-popconfirm
@@ -98,6 +123,7 @@ const emit = defineEmits<{
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-height: 0;
 }
 
 .section-heading {
@@ -119,8 +145,8 @@ const emit = defineEmits<{
 
 .image-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
 }
 
 .image-card {
@@ -129,17 +155,33 @@ const emit = defineEmits<{
   border-radius: 8px;
   background: var(--el-bg-color);
   overflow: hidden;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.image-card:hover {
+  border-color: rgba(31, 122, 84, 0.38);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.image-preview-wrap {
+  padding: 8px 8px 0;
 }
 
 .image-thumb {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 11;
   display: block;
   background: var(--el-fill-color-light);
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 .image-body {
-  padding: 10px 10px 6px;
+  padding: 10px 12px 8px;
 }
 
 .image-name {
@@ -160,7 +202,7 @@ const emit = defineEmits<{
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 0 10px 10px;
+  padding: 0 12px 12px;
 }
 
 .list-empty {
@@ -172,5 +214,28 @@ const emit = defineEmits<{
 .pagination-bar {
   display: flex;
   justify-content: flex-end;
+  padding: 4px 0;
+}
+
+.image-card-skeleton {
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 8px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.skeleton-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  border-radius: 6px;
+}
+
+.skeleton-body {
+  padding: 10px 4px 4px;
+}
+
+.skeleton-short {
+  width: 62%;
+  margin-top: 6px;
 }
 </style>

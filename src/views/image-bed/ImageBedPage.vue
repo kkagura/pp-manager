@@ -2,14 +2,14 @@
 import PageContainer from "@/components/page-layout/PageContainer.vue";
 import PageContent from "@/components/page-layout/PageContent.vue";
 import PageHeader from "@/components/page-layout/PageHeader.vue";
-import { Refresh } from "@element-plus/icons-vue";
-import { onMounted } from "vue";
+import { Plus, Refresh } from "@element-plus/icons-vue";
+import { onMounted, shallowRef } from "vue";
 import ImageList from "./components/ImageList.vue";
-import ImageResultPanel from "./components/ImageResultPanel.vue";
-import ImageUploadPanel from "./components/ImageUploadPanel.vue";
+import ImageUploadDialog from "./components/ImageUploadDialog.vue";
 import { useImageBed } from "./useImageBed";
 
 const imageBed = useImageBed();
+const uploadDialogVisible = shallowRef(false);
 
 onMounted(() => {
   imageBed.loadImages();
@@ -20,6 +20,13 @@ onMounted(() => {
   <PageContainer class="image-bed-page">
     <PageHeader title="图床">
       <template #actions>
+        <el-button
+          type="primary"
+          :icon="Plus"
+          @click="uploadDialogVisible = true"
+        >
+          上传图片
+        </el-button>
         <el-button
           :icon="Refresh"
           :loading="imageBed.loadingList.value"
@@ -32,18 +39,6 @@ onMounted(() => {
 
     <PageContent>
       <div class="image-bed-content">
-        <div class="workbench-row">
-          <ImageUploadPanel
-            :uploading="imageBed.uploading.value"
-            :max-size-text="imageBed.maxSizeText.value"
-            @upload="imageBed.uploadImage"
-          />
-          <ImageResultPanel
-            :record="imageBed.latestUploaded.value"
-            @copy="(_format, text) => imageBed.copyText(text)"
-          />
-        </div>
-
         <ImageList
           :items="imageBed.imageList.value"
           :loading="imageBed.loadingList.value"
@@ -56,6 +51,15 @@ onMounted(() => {
         />
       </div>
     </PageContent>
+
+    <ImageUploadDialog
+      v-model:visible="uploadDialogVisible"
+      :uploading="imageBed.uploading.value"
+      :max-size-text="imageBed.maxSizeText.value"
+      :record="imageBed.latestUploaded.value"
+      @upload="imageBed.uploadImage"
+      @copy="(_format, text) => imageBed.copyText(text)"
+    />
   </PageContainer>
 </template>
 
@@ -67,22 +71,6 @@ onMounted(() => {
 .image-bed-content {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-}
-
-.workbench-row {
-  display: flex;
-  gap: 18px;
-  align-items: stretch;
-  padding: 16px;
-  border: 1px solid var(--el-border-color-lighter);
-  border-radius: 8px;
-  background: var(--el-bg-color);
-}
-
-@media (max-width: 920px) {
-  .workbench-row {
-    flex-direction: column;
-  }
+  gap: 14px;
 }
 </style>
