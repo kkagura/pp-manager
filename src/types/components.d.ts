@@ -6,6 +6,7 @@ declare module "vue" {
     PageSider: typeof import("@/components/page-layout/PageSider.vue")["default"];
     SearchBar: typeof import("@/components/search-bar/SearchBar.vue")["default"];
     SearchItem: typeof import("@/components/search-bar/SearchItem.vue")["default"];
+    ImageSelectInput: typeof import("@/components/image-select/ImageSelectInput.vue")["default"];
   }
 }
 

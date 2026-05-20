@@ -36,12 +36,12 @@
           />
         </el-form-item>
         <el-form-item label="图标" prop="icon">
-          <el-input
+          <ImageSelectInput
             v-model="model.icon"
-            required
-            :maxlength="300"
-            clearable
-            placeholder="请输入图标"
+            placeholder="请选择图标"
+            button-text="选择图标"
+            dialog-title="选择快捷方式图标"
+            @select="formRef?.validateField('icon')"
           />
         </el-form-item>
         <!-- <el-form-item label="排序" prop="sort">
@@ -114,7 +114,7 @@ const rules = ref<FormRules>({
   name: [{ required: true, message: "请输入名称", trigger: "blur" }],
   alias: [{ required: true, message: "请输入别名", trigger: "blur" }],
   path: [{ required: true, message: "请输入路径", trigger: "blur" }],
-  icon: [{ required: true, message: "请输入图标", trigger: "blur" }],
+  icon: [{ required: true, message: "请选择图标", trigger: "change" }],
 });
 
 const handleOpen = () => {

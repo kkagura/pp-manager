@@ -109,7 +109,7 @@ export const siderRoutes = [
     component: () => import("../views/image-bed/ImageBedPage.vue"),
     meta: {
       title: "图床",
-      icon: "icon-ziyuan",
+      icon: "icon-xitonggongju-tuchuanggongju",
       menu: true,
       requiresAuth: true,
     },

@@ -13,6 +13,7 @@ import PageContent from "@/components/page-layout/PageContent.vue";
 import PageSider from "@/components/page-layout/PageSider.vue";
 import SearchBar from "@/components/search-bar/SearchBar.vue";
 import SearchItem from "@/components/search-bar/SearchItem.vue";
+import ImageSelectInput from "@/components/image-select/ImageSelectInput.vue";
 import pinia from "./store";
 
 const boostrap = () => {
@@ -27,6 +28,7 @@ const boostrap = () => {
     .component("PageSider", PageSider)
     .component("SearchBar", SearchBar)
     .component("SearchItem", SearchItem)
+    .component("ImageSelectInput", ImageSelectInput)
     .mount("#app")
     .$nextTick(() => {
       // Use contextBridge
