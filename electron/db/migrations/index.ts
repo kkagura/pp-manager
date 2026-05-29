@@ -7,6 +7,7 @@ import { update5 } from "./update5";
 import { update6 } from "./update6";
 import { update7 } from "./update7";
 import { update8 } from "./update8";
+import { update9 } from "./update9";
 import { getVersion } from "./version";
 
 export async function migrate() {
@@ -20,4 +21,5 @@ export async function migrate() {
   await update6();
   await update7();
   await update8();
+  await update9();
 }

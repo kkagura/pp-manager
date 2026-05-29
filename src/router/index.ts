@@ -82,6 +82,17 @@ export const siderRoutes = [
     },
   },
   {
+    name: "SnippetList",
+    path: "/snippet/list",
+    component: () => import("../views/snippet/SnippetList.vue"),
+    meta: {
+      title: "代码片段",
+      icon: "icon-daimapianduan",
+      menu: true,
+      requiresAuth: true,
+    },
+  },
+  {
     name: "SourceList",
     path: "/source/list",
     component: () => import("../views/source/SourceList.vue"),
