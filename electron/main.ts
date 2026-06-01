@@ -240,7 +240,9 @@ function createWindow(showWindow: boolean = true) {
     }
   });
 
-  win?.webContents.openDevTools();
+  if (!app.isPackaged) {
+    win?.webContents.openDevTools();
+  }
 }
 
 const gotTheLock = app.requestSingleInstanceLock();
