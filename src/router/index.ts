@@ -12,7 +12,7 @@ export const siderRoutes = [
       title: "首页",
       icon: "icon-shouye",
       menu: true,
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -23,7 +23,7 @@ export const siderRoutes = [
       title: "笔记",
       icon: "icon-yunyingxiaoji",
       menu: true,
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -34,7 +34,7 @@ export const siderRoutes = [
       title: "待办",
       icon: "icon-daiban",
       menu: true,
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -45,7 +45,7 @@ export const siderRoutes = [
       title: "工作区",
       icon: "icon-gongzuoqu",
       menu: true,
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -56,7 +56,7 @@ export const siderRoutes = [
       title: "新增工作区",
       menu: false,
       activeMenu: "WorkSpaceList",
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -67,7 +67,7 @@ export const siderRoutes = [
       title: "编辑工作区",
       menu: false,
       activeMenu: "WorkSpaceList",
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -78,7 +78,7 @@ export const siderRoutes = [
       title: "快捷方式",
       icon: "icon-030-shortcutscriptapp",
       menu: true,
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -89,7 +89,7 @@ export const siderRoutes = [
       title: "代码片段",
       icon: "icon-daimapianduan",
       menu: true,
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -100,7 +100,7 @@ export const siderRoutes = [
       title: "资源",
       icon: "icon-ziyuan",
       menu: true,
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -111,7 +111,7 @@ export const siderRoutes = [
       title: "字符串工具",
       icon: "icon-zifuchuantihuan_2",
       menu: true,
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -133,7 +133,7 @@ export const siderRoutes = [
       title: "设置",
       icon: "icon-shezhi",
       menu: true,
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
   {
@@ -144,7 +144,7 @@ export const siderRoutes = [
       title: "更新日志",
       menu: false,
       activeMenu: "Setting",
-      requiresAuth: true,
+      requiresAuth: false,
     },
   },
 ];
