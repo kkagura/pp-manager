@@ -209,6 +209,25 @@ function createWindow(showWindow: boolean = true) {
     return getFileInfo(filePath);
   });
 
+  ipcMain.handle("openSourceFolder", async (event, sourcePath: string) => {
+    try {
+      const fileInfo = (await getFileInfo(sourcePath)) as {
+        isDirectory: boolean;
+        realPath: string;
+      };
+      if (fileInfo.isDirectory) {
+        await shell.openPath(fileInfo.realPath);
+      } else {
+        shell.showItemInFolder(fileInfo.realPath);
+      }
+      log.info(`openSourceFolder: ${fileInfo.realPath}`);
+      return fileInfo.realPath;
+    } catch (error) {
+      log.error(`openSourceFolder error: ${error}`);
+      throw error;
+    }
+  });
+
   // 渲染进程主动获取当前已记录的 deep link（例如首次加载时）
   ipcMain.handle("getDeepLink", async () => {
     return deepLinkUrl ? buildDeepLinkPayload(deepLinkUrl) : null;

@@ -35,6 +35,10 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     return ipcRenderer.invoke("openSource", event);
   },
 
+  openSourceFolder(path: string) {
+    return ipcRenderer.invoke("openSourceFolder", path);
+  },
+
   getFileInfo(path: string) {
     return ipcRenderer.invoke("getFileInfo", path);
   },

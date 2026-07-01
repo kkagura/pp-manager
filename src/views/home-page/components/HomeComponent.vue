@@ -5,20 +5,31 @@
       <PageContent :scroll="false">
         <div class="content-wrapper">
           <div class="source-list">
-            <div
-              class="source-item"
+            <Contextmenu
               v-for="source in sourceList"
               :key="source.id"
-              @click="handleLaunchSource(source)"
+              class="source-menu"
             >
-              <img
-                class="source-icon"
-                :src="source.shortcut.icon"
-                alt="source-icon"
-              />
-              <div class="source-name">{{ source.name }}</div>
-              <div class="source-description">{{ source.description }}</div>
-            </div>
+              <div class="source-item" @click="handleLaunchSource(source)">
+                <img
+                  class="source-icon"
+                  :src="source.shortcut.icon"
+                  alt="source-icon"
+                />
+                <div class="source-name">{{ source.name }}</div>
+                <div class="source-description">{{ source.description }}</div>
+              </div>
+              <template #contextmenu="{ closePanel }">
+                <div class="context-menus">
+                  <div
+                    class="context-menu-item"
+                    @click.stop="handleOpenSourceFolder(source, closePanel)"
+                  >
+                    <el-button link>打开文件夹</el-button>
+                  </div>
+                </div>
+              </template>
+            </Contextmenu>
             <div
               @drop="handleDrop"
               @click="handleAddSource"
@@ -59,6 +70,7 @@ import { ElMessage } from "element-plus";
 // import MdEditor from "@/components/md-editor/MdEditor.vue";
 import { debounce } from "@/utils/debounce";
 import RichEditor from "@/components/rich-editor/RichEditor.vue";
+import Contextmenu from "@/components/contextmenu/Contextmenu.vue";
 
 const sourceService = getService(SourceServiceKey);
 const projectService = getService(ProjectServiceKey);
@@ -122,6 +134,32 @@ const handleLaunchSource = (source: SourceListRecordDto) => {
   (window.ipcRenderer as any).openSource(event);
 };
 
+const handleOpenSourceFolder = async (
+  source: SourceListRecordDto,
+  closePanel: () => void
+) => {
+  closePanel();
+  if (!source.path) {
+    ElMessage.warning("资源路径为空");
+    return;
+  }
+  if (/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(source.path)) {
+    ElMessage.warning("网络资源没有本地文件夹");
+    return;
+  }
+  try {
+    const ipcRenderer = (window as any).ipcRenderer;
+    if (!ipcRenderer?.openSourceFolder) {
+      ElMessage.error("当前环境不支持打开文件夹");
+      return;
+    }
+    await ipcRenderer.openSourceFolder(source.path);
+  } catch (error) {
+    console.error("打开资源文件夹失败", error);
+    ElMessage.error("打开文件夹失败");
+  }
+};
+
 const handleDrop = async (event: DragEvent) => {
   event.preventDefault();
   event.stopPropagation();
@@ -165,6 +203,9 @@ const handleAddSource = () => {
   row-gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 16px;
+  .source-menu {
+    width: 140px;
+  }
   .source-item {
     width: 140px;
     min-height: 140px;
@@ -199,6 +240,20 @@ const handleAddSource = () => {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+  }
+}
+.context-menus {
+  padding: 6px 0;
+  border-radius: 4px;
+  .context-menu-item {
+    min-width: 110px;
+    padding: 6px 12px;
+    line-height: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+      background-color: var(--el-color-primary-light-9);
     }
   }
 }
