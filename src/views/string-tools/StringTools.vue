@@ -208,8 +208,8 @@ const passwordConfig = ref({
   includeUppercase: true,
   includeNumbers: true,
   includeSpecialChars: true,
-  minLength: 12,
-  maxLength: 12,
+  minLength: 20,
+  maxLength: 20,
 });
 
 const generatedPassword = ref("");
