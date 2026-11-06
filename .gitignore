@@ -26,3 +26,4 @@ dist-electron
 *.db
 release
 api-docs
+/AGENTS.md
